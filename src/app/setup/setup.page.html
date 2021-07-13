@@ -1,0 +1,99 @@
+<ion-header>
+    <ion-toolbar class="ion-text-center">
+        <ion-title>Signup</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+    <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+        <ion-grid>
+            <ion-row>
+                <ion-col size-sm="6" offset-sm="3">
+                    <ion-list>
+                        <ion-item>
+                            <ion-label position="floating">Name</ion-label>
+                            <ion-input type="text" ngModel name="firstName" required #firstNameCtrl="ngModel"></ion-input>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label position="floating">Surname</ion-label>
+                            <ion-input type="text" ngModel name="lastName" required #lastNameCtrl="ngModel"></ion-input>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label position="floating">E-Mail</ion-label>
+                            <ion-input type="email" ngModel name="email" required email #emailCtrl="ngModel"></ion-input>
+                        </ion-item>
+                        <ion-item *ngIf="!emailCtrl.valid && emailCtrl.touched" lines="none">
+                            <ion-label class="error">
+                                Should be a valid email address.
+                            </ion-label>
+                        </ion-item>
+                        <!-- <ion-item> -->
+                            <!-- <ion-label position="floating">Country Code </ion-label> -->
+                            <!-- <ion-select placeholder="select your country" name="phoneCode" ngModel #phoneCodeCtrl="ngModel">
+                                <ion-select-option *ngFor="let i of countries" [value]="i.dial_code">{{i.name}}
+                                </ion-select-option>
+                            </ion-select> -->
+                            <!-- <ion-row> -->
+
+                            <!-- <ion-col size=3>
+                                    <ion-select placeholder="+" name="phoneCode" ngModel #phoneCodeCtrl="ngModel">
+                                        <ion-select-option *ngFor="let i of countries" [value]="i.dial_code">{{i.name}} {{i.dial_code}}
+                                        </ion-select-option>
+                                    </ion-select>
+                                </ion-col>
+                                <ion-col size=3>
+                                    <ion-input [value]="phoneCodeCtrl.value"></ion-input>
+                                </ion-col>
+                                <ion-col size=6>
+                                    <ion-input placeholder="RTN"></ion-input>
+                                </ion-col> -->
+                            <!-- </ion-row> -->
+                        <!-- </ion-item> -->
+                        <!-- <ion-item>
+                            <ion-label position="floating">Phone </ion-label>
+                            <ion-row>
+                                <ion-col size=3>
+                                    <ion-input [value]="phoneCodeCtrl.value" ngModel name="countryCode" required #countryCodeCtrl="ngModel"></ion-input>
+                                </ion-col>
+                                <ion-col size=8>
+                                    <ion-input type="number" ngModel name="phone" required #phoneNumberCtrl="ngModel"></ion-input>
+                                </ion-col>
+                            </ion-row>
+
+                        </ion-item> -->
+                        <ion-item>
+                            <ion-label position="stacked">Phone Number</ion-label>
+                            <ion-intl-tel-input 
+                            ngModel name="phone" required 
+                              #phoneNumberControl="ngModel" inputPlaceholder="Enter Phone number" [selectFirstCountry]="false" >
+                            </ion-intl-tel-input>
+                          </ion-item>
+
+                        <ion-item>
+                            <ion-label position="floating">Password</ion-label>
+                            <ion-input type="password" ngModel name="password" required minlength="6" #passwordCtrl="ngModel"></ion-input>
+                        </ion-item>
+                        <ion-item *ngIf="!passwordCtrl.valid && passwordCtrl.touched" lines="none">
+                            <ion-label>
+                                Should at least be 6 characters long.
+                            </ion-label>
+                        </ion-item>
+                        <ion-item>
+                            <ion-label position="floating">Password</ion-label>
+                            <ion-input type="password" ngModel name="password2" required minlength="6" #password2Ctrl="ngModel"></ion-input>
+                        </ion-item>
+                    </ion-list>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col size-sm="6" offset-sm="3">
+                    <ion-button type="button" color="primary" fill="clear" expand="block" (click)="onSwitchAuthMode()">
+                        Switch to Login
+                    </ion-button>
+                    <ion-button type="submit" color="primary" expand="block" [disabled]="!f.valid">
+                        Signup
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </form>

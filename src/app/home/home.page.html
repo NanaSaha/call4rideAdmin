@@ -1,0 +1,230 @@
+<ion-header>
+    <ion-toolbar class="titleBg">
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Book a trip</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content class="background" padding>
+    <div class="ion-text-center" style="padding-top:20px;">
+        <h1>Book Your Ride</h1>
+    </div>
+
+
+    <!-- <button mat-raised-button (click)="isLinear = !isLinear" id="toggle-linear">
+    {{!isLinear ? 'Enable linear mode' : 'Disable linear mode'}}
+  </button> -->
+    <mat-vertical-stepper [linear]="isLinear" #stepper>
+        <mat-step>
+            <div>
+                <ng-template matStepLabel class="stepBg">
+                    <mat-label class="matLb">Fill in your pickup location</mat-label>
+
+                </ng-template>
+                <ion-grid class="bjorney">
+                    <ion-row class="ion-text-center">
+                        <ion-col>
+                            <!-- <label>Detect my locaton </label> -->
+                            <ion-icon name="compass" large (click)="getCurrentPosition()"></ion-icon>
+                        </ion-col>
+                    </ion-row>
+                    <ion-row>
+                        <ion-col>
+                            <ion-searchbar [(ngModel)]="autocomplete.input" (ionInput)="updateSearchResults()" [value]="PickUpformattedAddress" placeholder="Pickup Location"></ion-searchbar>
+                        </ion-col>
+                    </ion-row>
+                    <ion-row [hidden]="autocompleteItems.length == 0">
+                        <ion-list>
+                            <ion-item *ngFor="let item of autocompleteItems" tappable (click)="selectSearchResult(item)">
+                                {{ item.description }}
+                            </ion-item>
+                        </ion-list>
+                    </ion-row>
+                </ion-grid>
+                <!-- <div>
+                    <button mat-button matStepperNext>Next</button>
+                </div> -->
+            </div>
+        </mat-step>
+        <mat-step>
+            <div>
+                <ng-template matStepLabel class="stepBg">
+                    <mat-label class="matLb">Fill in your dropoff location</mat-label>
+                </ng-template>
+                <ion-grid class="bjorney">
+                    <ion-row>
+                        <ion-col>
+                            <ion-searchbar placeholder="Dropoff Location" [(ngModel)]="autocompletedp.input" (ionInput)="updateSearchResultsdp()" [value]="DropOffformattedAddress"></ion-searchbar>
+                        </ion-col>
+                    </ion-row>
+                    <ion-row [hidden]="autocompletedpItems.length == 0">
+                        <ion-list>
+                            <ion-item *ngFor="let item of autocompletedpItems" tappable (click)="selectdpSearchResult(item)">
+                                {{ item.description }}
+                            </ion-item>
+                        </ion-list>
+                    </ion-row>
+                </ion-grid>
+                <!-- <mat-label>Address</mat-label> -->
+                <!-- <mat-form-field>
+                    <mat-label>Address</mat-label>
+                    <input matInput formControlName="secondCtrl" placeholder="Ex. 1 Main St, New York, NY" required>
+                </mat-form-field> -->
+                <!-- <div>
+                    <button mat-button matStepperPrevious>Back</button>
+                    <button mat-button matStepperNext>Next</button>
+                </div> -->
+            </div>
+        </mat-step>
+        <mat-step>
+            <ng-template matStepLabel class="stepBg">
+                <mat-label class="matLb">Fill in the date and time</mat-label>
+            </ng-template>
+            <ion-grid class="bjorney">
+                <ion-row class="ion-text-center">
+                    <ion-col>
+                        <ion-item>
+                            <ion-label class="setAttention">Pickup Date</ion-label>
+                            <ion-datetime displayFormat="DD-MMM-YYYY" [(ngModel)]="myDate"></ion-datetime>
+                        </ion-item>
+                    </ion-col>
+                    <ion-col>
+                        <ion-item>
+                            <ion-label class="setAttention">Pickup Time</ion-label>
+                            <ion-datetime displayFormat="hh-mm-A" [(ngModel)]="starttime"></ion-datetime>
+                        </ion-item>
+                    </ion-col>
+                </ion-row>
+                <ion-row>
+                    <ion-col>
+                        <ion-item>
+                            <ion-checkbox color="danger" [(ngModel)]="isReturnChecked" slot="start" (ionChange)="requiredReturnTick($event.checked)"></ion-checkbox>
+                            <ion-label>Do you also need a return ride?</ion-label>
+                        </ion-item>
+                    </ion-col>
+                    <ion-item *ngIf="isReturnChecked" size="12">
+                        <ion-row>
+                            <ion-col size="12">
+                                <ion-searchbar [(ngModel)]="autocompleteRT.input" (ionInput)=" updateSearchRTResults()" [value]="PickUpformattedRTAddress" placeholder="Pickup return Location"></ion-searchbar>
+                            </ion-col>
+                        </ion-row>
+                    </ion-item>
+                    <ion-item [hidden]="autocompleteRTItems.length == 0" size="12">
+                        <ion-row>
+                            <ion-col size="12">
+                                <ion-list>
+                                    <ion-item *ngFor="let item of autocompleteRTItems" tappable (click)="selectSearchRTResult(item)">
+                                        {{ item.description }}
+                                    </ion-item>
+                                </ion-list>
+                            </ion-col>
+                        </ion-row>
+                    </ion-item>
+                    <ion-item *ngIf="isReturnChecked" size="12">
+                        <ion-row>
+                            <ion-col>
+                                <ion-searchbar placeholder="Dropoff return Location" [(ngModel)]="autocompletedpRT.input" (ionInput)="updateSearchdpRTResults()" [value]="DropOffformattedRTAddress"></ion-searchbar>
+                            </ion-col>
+                        </ion-row>
+                    </ion-item>
+                    <ion-item [hidden]="autocompletedpRTItems.length == 0" size="12">
+                        <ion-row>
+                            <ion-list>
+                                <ion-item *ngFor="let item of autocompletedpRTItems" tappable (click)="selectSearchdpRTResult(item)">
+                                    {{ item.description }}
+                                </ion-item>
+                            </ion-list>
+                        </ion-row>
+                    </ion-item>
+                    <ion-item *ngIf="isReturnChecked" size="12">
+                        <ion-row class="ion-text-center">
+                            <ion-col>
+                                <ion-item>
+                                    <ion-label class="setAttention">Return Date</ion-label>
+                                    <ion-datetime displayFormat="DD-MMM-YYYY" [(ngModel)]="myDateRT"></ion-datetime>
+                                </ion-item>
+                            </ion-col>
+                            <ion-col>
+                                <ion-item>
+                                    <ion-label class="setAttention">Return Time</ion-label>
+                                    <ion-datetime displayFormat="hh-mm-A" [(ngModel)]="starttimeRT"></ion-datetime>
+                                </ion-item>
+                            </ion-col>
+                        </ion-row>
+                    </ion-item>
+                </ion-row>
+                <ion-row>
+                    <ion-col>
+                        <ion-button type="submit" color="light" expand="block" (click)="getQuote()" [disabled]="!autocompletedp.input || !autocompletedp.input">
+                            QUOTE
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+            <!-- <div>
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-button (click)="stepper.reset()">Reset</button>
+            </div> -->
+        </mat-step>
+    </mat-vertical-stepper>
+
+
+    <ion-content class="background" padding style="height: 200px;">
+
+    </ion-content>
+</ion-content>
+
+<!-- <ion-content class="ion-padding">
+    <ion-grid class="bjorney">
+        <ion-row>
+            <ion-col class="ion-text-center">
+                <h4>Book Your Ride</h4>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-searchbar [(ngModel)]="autocomplete.input" (ionInput)="updateSearchResults()" [value]="PickUpformattedAddress" placeholder="Pickup Location"></ion-searchbar>
+            </ion-col>
+        </ion-row>
+        <ion-row [hidden]="autocompleteItems.length == 0">
+            <ion-list>
+                <ion-item *ngFor="let item of autocompleteItems" tappable (click)="selectSearchResult(item)">
+                    {{ item.description }}
+                </ion-item>
+            </ion-list>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-searchbar placeholder="Dropoff Location" [(ngModel)]="autocompletedp.input" (ionInput)="updateSearchResultsdp()" [value]="DropOffformattedAddress"></ion-searchbar>
+            </ion-col>
+        </ion-row>
+        <ion-row [hidden]="autocompletedpItems.length == 0">
+            <ion-list>
+                <ion-item *ngFor="let item of autocompletedpItems" tappable (click)="selectdpSearchResult(item)">
+                    {{ item.description }}
+                </ion-item>
+            </ion-list>
+        </ion-row>
+        <ion-row class="ion-text-center">
+            <ion-col>
+                <ion-label class="setAttention">Travel Date</ion-label>
+                <ion-datetime displayFormat="DD-MMM-YYYY" [(ngModel)]="myDate"></ion-datetime>
+            </ion-col>
+            <ion-col>
+                <ion-label class="setAttention">Pickup Time</ion-label>
+                <ion-datetime displayFormat="hh-mm-A" [(ngModel)]="starttime"></ion-datetime>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <ion-button type="submit" color="primary" expand="block" (click)="getQuote()">
+                    QUOTE
+                </ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>
+<ion-content class="ion-padding">
+    <div class="map" #map></div>
+</ion-content> -->

@@ -1,0 +1,124 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>profile</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+    <ion-card>
+        <ion-card-content>
+            <ion-item lines="none">
+                <ion-thumbnail slot="start">
+                    <ion-img [src]="selectedImage"></ion-img>
+                </ion-thumbnail>
+                <ion-label position="stacked">{{fullName }}</ion-label>
+            </ion-item>
+            <ion-item lines="none">
+                <app-image-picker position="stacked" slot="start" [showPreview]="form.get('image').value" (imagePick)="onImagePicked($event)"></app-image-picker>
+                <div class="save" slot="end">
+                    <ion-button color="primary" (click)="onUploadUserImage()">
+                        <ion-icon name="save-outline" slot="start"></ion-icon>
+                        <ion-label>Save Picture</ion-label>
+                    </ion-button>
+                </div>
+            </ion-item>
+        </ion-card-content>
+    </ion-card>
+    <ion-item lines="full">
+        <ion-label slot="start" class="myDetail">My Details</ion-label>
+        <ion-button slot="end" color="primary" fill="clear" (click)="onEdit()">
+            <ion-icon name="create-outline" class="myDetail" slot="start"></ion-icon>
+            <ion-label class="myDetail">Edit</ion-label>
+        </ion-button>
+    </ion-item>
+    <ion-grid>
+        <ion-row>
+            <ion-col size="3">Email</ion-col>
+            <ion-col> {{email}} </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col size="3">Phone</ion-col>
+            <ion-col> {{phone}} </ion-col>
+        </ion-row>
+    </ion-grid>
+
+    <form [formGroup]="form" #f="ngForm" (ngSubmit)="onSubmit(f)" *ngIf="editMode">
+        <ion-grid>
+            <ion-row>
+                <ion-col size-sm="6" offset-sm="3">
+                    <ion-item>
+                        <ion-label position="floating">FirstName</ion-label>
+                        <ion-input type="text" autocomplete autocorrect formControlName="firstName"></ion-input>
+                    </ion-item>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col size-sm="6" offset-sm="3">
+                    <ion-item>
+                        <ion-label position="floating">LastName</ion-label>
+                        <ion-input type="text" autocomplete autocorrect formControlName="lastName"></ion-input>
+                    </ion-item>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col>
+                    <ion-item>
+                        <ion-select placeholder="select your country" formControlName="phoneCode" #phoneCodeValue (ionChange)="onSelectCountryChange($event)">
+                            <ion-select-option *ngFor="let i of countries" [value]="i.dial_code">{{i.name}}
+                            </ion-select-option>
+                        </ion-select>
+                    </ion-item>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col size-sm="6" offset-sm="3">
+                    <ion-item>
+                        <ion-label position="floating">Phone </ion-label>
+                        <ion-row>
+                            <ion-col size=3>
+                                <ion-input formControlName="countryCode" required></ion-input>
+                            </ion-col>
+                            <ion-col size=8>
+                                <ion-input type="number" formControlName="phone2" required></ion-input>
+                            </ion-col>
+                        </ion-row>
+
+                    </ion-item>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col size-sm="6" offset-sm="3">
+                    <ion-item>
+                        <ion-label position="floating">Password</ion-label>
+                        <ion-input type="password" autocomplete autocorrect formControlName="password"></ion-input>
+                    </ion-item>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col size-sm="6" offset-sm="3">
+                    <ion-item>
+                        <ion-label position="floating">Password</ion-label>
+                        <ion-input type="password" autocomplete autocorrect formControlName="password2"></ion-input>
+                    </ion-item>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+                <ion-col>
+                    <ion-button type="button" color="primary" expand="block" (click)="onCancel()">
+                        Cancel
+                    </ion-button>
+                </ion-col>
+                <ion-col>
+                    <ion-button type="submit" color="primary" expand="block" [disabled]="!f.valid">
+                        Update Detail
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </form>
+    <ion-content style="height:250px">
+
+    </ion-content>
+</ion-content>

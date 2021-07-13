@@ -1,0 +1,13 @@
+{
+  "appId": "com.callforride.taxi",
+  "appName": "callforride",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "cordova": {}
+}

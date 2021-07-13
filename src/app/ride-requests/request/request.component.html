@@ -1,0 +1,54 @@
+<ion-item class="child-item" text-wrap detail="false" lines="none">
+    <ion-grid no-padding>
+        <ion-row no-padding align-items-center>
+            <!-- <ion-col size="12"> -->
+            <!-- <ion-row no-padding> -->
+            <ion-col>
+                <ion-card>
+                    <ion-card-header>
+                        <ion-label position="stacked" class="setAttention">Route Details</ion-label>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <ion-item lines="full">
+                            <ion-label slot="start">Distance: </ion-label>
+                            <ion-label>{{ request.distance }}</ion-label>
+                        </ion-item>
+                        <ion-item lines="full">
+                            <ion-label slot="start">Fare: </ion-label>
+                            <ion-label>{{request.fare }}</ion-label>
+                        </ion-item>
+                        <ion-item lines="none">
+                            <ion-label slot="start">Location: </ion-label>
+                            <!-- <ion-label sta>{{request.startAddress}}</ion-label> -->
+                        </ion-item>
+                        <ion-item lines="full">
+                            <!-- <ion-label slot="start">Location: </ion-label> -->
+                            <ion-label sta>{{request.startAddress}}</ion-label>
+                        </ion-item>
+                        <ion-item lines="none">
+                            <ion-label slot="start">Desnation: </ion-label>
+                            <!-- <ion-label>{{request.endAddress }}</ion-label> -->
+                        </ion-item>
+                        <ion-item lines="full">
+                            <!-- <ion-label slot="start">Desnation: </ion-label> -->
+                            <ion-label>{{request.endAddress }}</ion-label>
+                        </ion-item>
+                        <ion-item lines="none">
+                            <ion-label slot="start">Phone: </ion-label>
+                            <!-- <ion-label>{{request.user.phone }}</ion-label> -->
+                        </ion-item>
+                        <ion-item lines="full">
+                            <!-- <ion-label slot="start">Phone: </ion-label> -->
+                            <ion-label>{{request.user.phone }}</ion-label>
+                        </ion-item>
+                    </ion-card-content>
+                </ion-card>
+            </ion-col>
+
+
+            <!-- </ion-row> -->
+            <!-- </ion-col> -->
+
+        </ion-row>
+    </ion-grid>
+</ion-item>

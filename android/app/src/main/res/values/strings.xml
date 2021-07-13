@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">callforride</string>
+    <string name="title_activity_main">callforride</string>
+    <string name="package_name">com.callforride.taxi</string>
+    <string name="custom_url_scheme">com.callforride.taxi</string>
+</resources>

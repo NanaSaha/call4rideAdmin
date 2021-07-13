@@ -1,0 +1,30 @@
+ion-content {
+    --background: var(--ion-color-light);
+}
+
+.accordion-list {
+    margin-bottom: 4px;
+    --ion-item-background: #fff;
+    .section,
+    .section-active {
+        --min-height: 58px;
+    }
+}
+
+.section {
+    --ion-item-background: #fff;
+    --ion-item-color: #000;
+}
+
+.section-active {
+    --ion-item-background: #ffc400;
+    --ion-item-color: #000;
+    font-weight: 600;
+    ion-icon {
+        color: #fff;
+    }
+}
+
+.section-header {
+    margin-bottom: 4px;
+}

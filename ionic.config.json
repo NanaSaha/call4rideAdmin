@@ -1,0 +1,7 @@
+{
+  "name": "callforride3",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

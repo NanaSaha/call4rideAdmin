@@ -1,0 +1,131 @@
+<ion-app>
+    <ion-split-pane contentId="main-content" *ngIf="!isDesktop">
+        <ion-menu contentId="main-content" type="overlay" (ionWillOpen)="menuOpened()" (ionDrag)="menuOpened()" (ionDidClose)="menuClosed()">
+            <ion-header>
+                <ion-toolbar>
+                    <ion-title>
+                        Call For Ride
+                    </ion-title>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content class="ion-padding">
+                <ion-menu-toggle>
+                    <ion-card routerLink="/profile">
+                        <ion-card-content>
+                            <ion-item lines="none">
+                                <ion-thumbnail slot="start">
+                                    <ion-img [src]="selectedImage"></ion-img>
+                                </ion-thumbnail>
+                                <ion-label position="stacked">{{fullName }}</ion-label>
+                                <ion-text position="stacked" style="font-size: small;">Edit Profile</ion-text>
+                            </ion-item>
+
+                        </ion-card-content>
+
+                    </ion-card>
+                </ion-menu-toggle>
+                <!-- <ion-item lines="none" > -->
+                <!-- <ion-icon name="person-circle-outline" slot="start"></ion-icon>
+            <ion-label>Profile</ion-label> -->
+
+                <!-- <ion-label>{{item.text}}</ion-label> -->
+                <!-- </ion-item> -->
+
+                <ion-list>
+
+                    <ion-menu-toggle>
+                        <ion-item lines="none" routerLink="/settings">
+                            <ion-icon name="settings-outline" slot="start"></ion-icon>
+                            <ion-label>Settings</ion-label>
+                        </ion-item>
+                    </ion-menu-toggle>
+                    <ion-menu-toggle>
+                        <ion-item lines="none" routerLink="/home">
+                            <ion-icon name="compass-outline" slot="start"></ion-icon>
+                            <ion-label>Book a trip</ion-label>
+                        </ion-item>
+                    </ion-menu-toggle>
+                    <ion-menu-toggle>
+                        <ion-item lines="none" routerLink="/bookings">
+                            <ion-icon name="checkbox-outline" slot="start"></ion-icon>
+                            <ion-label>Tripe History</ion-label>
+                        </ion-item>
+                    </ion-menu-toggle>
+                    <ion-menu-toggle>
+                        <ion-item lines="none" routerLink="/driver">
+                            <ion-icon name="checkbox-outline" slot="start"></ion-icon>
+                            <ion-label>Track My Ride</ion-label>
+                        </ion-item>
+                    </ion-menu-toggle>
+                    <ion-menu-toggle *ngIf="adminMenuAllowed">
+                        <ion-item lines="none" routerLink="/ride-requests">
+                            <ion-icon name="checkbox-outline" slot="start"></ion-icon>
+                            <ion-label>Requests</ion-label>
+                        </ion-item>
+                    </ion-menu-toggle>
+                    <ion-menu-toggle *ngIf="adminMenuAllowed">
+                        <ion-item lines="none" routerLink="/user">
+                            <ion-icon name="checkbox-outline" slot="start"></ion-icon>
+                            <ion-label>Users</ion-label>
+                        </ion-item>
+                    </ion-menu-toggle>
+                    <ion-menu-toggle *ngIf="adminMenuAllowed">
+                        <ion-item lines="none" routerLink="/drver-registration">
+                            <ion-icon name="checkbox-outline" slot="start"></ion-icon>
+                            <ion-label>Driver Registration </ion-label>
+                        </ion-item>
+                    </ion-menu-toggle>
+                    <ion-menu-toggle>
+                        <ion-item lines="none" routerLink="/driver-job">
+                            <ion-icon name="checkbox-outline" slot="start"></ion-icon>
+                            <ion-label>My Assigned Jobs</ion-label>
+                        </ion-item>
+                    </ion-menu-toggle>
+                    <ion-menu-toggle>
+                        <ion-item lines="none" (click)="onLogout()" button>
+                            <ion-icon name="exit" slot="start"></ion-icon>
+                            <ion-label>Logout</ion-label>
+                        </ion-item>
+                    </ion-menu-toggle>
+                </ion-list>
+            </ion-content>
+        </ion-menu>
+        <ion-router-outlet id="main-content"></ion-router-outlet>
+        <!-- {{ message | async | json }} -->
+    </ion-split-pane>
+    <div *ngIf="isDesktop">
+        <ion-header style="height: fit-content;">
+            <ion-toolbar>
+                <ion-row class="ion-align-items-center">
+                    <ion-Col size="2">
+                        <img src="../assets/image/icon.png" class="logo ion-text-left" style="height: 50px;">
+                    </ion-Col>
+                    <ion-Col size="10">
+                        <div class="navbar" class="ion-text-center">
+                            <ion-button fill="clear" color="dark" size="small" *ngIf="adminMenuAllowed" routerLink="/user" routerLinkActive="active-link" class="link">
+                                users
+                            </ion-button>
+                            <ion-button fill="clear" color="dark" size="small" *ngIf="adminMenuAllowed" routerLink="/ride-requests" routerLinkActive="active-link" class="link">
+                                requests
+                            </ion-button>
+                            <ion-button fill="clear" color="dark" size="small" routerLink="/home" routerLinkActive="active-link" class="link">
+                                book a ride
+                            </ion-button>
+                            <ion-button fill="clear" color="dark" size="small" routerLink="/profile" routerLinkActive="active-link" class="link">
+                                profile
+                            </ion-button>
+                            <ion-button fill="clear" color="dark" size="small" routerLink="/settings" routerLinkActive="active-link" class="link">
+                                settings
+                            </ion-button>
+                            <ion-button fill="clear" color="dark" size="small" routerLinkActive="active-link" class="link" (click)="onLogout()">
+                                Logout
+                            </ion-button>
+                        </div>
+                    </ion-Col>
+
+                </ion-row>
+            </ion-toolbar>
+        </ion-header>
+        <ion-router-outlet id="main-content"></ion-router-outlet>
+    </div>
+</ion-app>

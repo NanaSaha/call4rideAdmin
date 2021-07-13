@@ -1,0 +1,8 @@
+.select-text {
+    flex: 1 1 0%;
+    min-width: 150px !important;
+    font-size: inherit;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}

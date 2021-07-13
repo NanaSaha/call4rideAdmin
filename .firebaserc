@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "callforride"
+  },
+  "targets": {
+    "callforride": {
+      "hosting": {
+        "app": [
+          "callforride"
+        ]
+      }
+    }
+  }
+}
