@@ -10,15 +10,19 @@ import {
 } from "@angular/core";
 
 import { ToastController, Platform, LoadingController } from "@ionic/angular";
-import { Router, NavigationExtras } from '@angular/router';
+import { Router, NavigationExtras } from "@angular/router";
 
-import { AngularFireMessaging } from '@angular/fire/messaging';
-import { FormGroup, Validators } from '@angular/forms';
-import {  Capacitor,Plugins } from '@capacitor/core';
+import { AngularFireMessaging } from "@angular/fire/messaging";
+import { FormGroup, Validators } from "@angular/forms";
+import { Capacitor, Plugins } from "@capacitor/core";
 const { Geolocation, Toast } = Plugins;
-import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
+import {
+  NativeGeocoder,
+  NativeGeocoderResult,
+  NativeGeocoderOptions,
+} from "@ionic-native/native-geocoder/ngx";
 // import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { Diagnostic } from '@ionic-native/diagnostic/ngx';
+import { Diagnostic } from "@ionic-native/diagnostic/ngx";
 import { LocationService } from "./location.service";
 
 // import { Platform } from 'ionic-angular';
@@ -51,7 +55,7 @@ export class HomePage implements OnInit, AfterViewInit {
   starttimeRT: string = new Date().toISOString();
   autocomplete: any;
   autocompletedp: any;
-  autocompleteRT:any;
+  autocompleteRT: any;
   autocompletedpRT: any;
   GoogleAutocomplete: any;
   GooglePlaces: any;
@@ -60,15 +64,15 @@ export class HomePage implements OnInit, AfterViewInit {
   autocompletedpItems: any;
   autocompleteRTItems: any;
   autocompletedpRTItems: any;
-  
+
   nearbyItems: any = new Array<any>();
   loading: any;
   DropOffformattedAddress: any;
   PickUpformattedAddress: any;
-  map:any;
+  map: any;
   locationItems: any;
-   directionsService: any;
-  directionsDisplay = new google.maps.DirectionsRenderer;
+  directionsService: any;
+  directionsDisplay = new google.maps.DirectionsRenderer();
   isLinear = false;
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
@@ -96,7 +100,7 @@ export class HomePage implements OnInit, AfterViewInit {
     // private geolocation: Geolocation,
     private diagnostic: Diagnostic,
     private locationService: LocationService,
-    public ngZone: NgZone, 
+    public ngZone: NgZone
   ) {
     this.geocoder = new google.maps.Geocoder();
     let elem = document.createElement("div");
@@ -122,34 +126,33 @@ export class HomePage implements OnInit, AfterViewInit {
     this.loading = this.loadingCtrl.create();
     this.directionsService = new google.maps.DirectionsService();
     this.directionsDisplay = new google.maps.DirectionsRenderer();
-    this.autocomplete.input =  "";
+    this.autocomplete.input = "";
     this.PickUpformattedAddress = "";
 
     this.platform.resume.subscribe(async () => {
-      
-       this.getCurrentPosition();
-        
+      this.getCurrentPosition();
     });
   }
 
-  async getCurrentPosition()
-  {
+  async getCurrentPosition() {
     // this.platform.ready().then(() => {
-      
-      Geolocation.getCurrentPosition().then((resp) => {
-      console.log(resp)
-      this.latitude = resp.coords.latitude;
-      this.longitude = resp.coords.longitude;
-      this.getAddress(this.latitude, this.longitude);
-     }).catch((error) => {
-       console.log('Error getting location', error);
-     });
+
+    Geolocation.getCurrentPosition()
+      .then((resp) => {
+        console.log("Respose from Current Position " + JSON.stringify(resp));
+        this.latitude = resp.coords.latitude;
+        this.longitude = resp.coords.longitude;
+        this.getAddress(this.latitude, this.longitude);
+      })
+      .catch((error) => {
+        console.log("Error getting location", error);
+      });
     // })
   }
   // geocoder options
   nativeGeocoderOptions: NativeGeocoderOptions = {
     useLocale: true,
-    maxResults: 5
+    maxResults: 5,
   };
 
   async getMyLocation() {
@@ -158,32 +161,33 @@ export class HomePage implements OnInit, AfterViewInit {
       if (Capacitor.isNative) {
         const canUseGPS = await this.locationService.askToTurnOnGPS();
         this.postGPSPermission(canUseGPS);
+      } else {
+        this.postGPSPermission(true);
       }
-      else { this.postGPSPermission(true); }
-    }
-    else {
+    } else {
       const permission = await this.locationService.requestGPSPermission();
-      if (permission === 'CAN_REQUEST' || permission === 'GOT_PERMISSION') {
+      if (permission === "CAN_REQUEST" || permission === "GOT_PERMISSION") {
         if (Capacitor.isNative) {
           const canUseGPS = await this.locationService.askToTurnOnGPS();
           this.postGPSPermission(canUseGPS);
+        } else {
+          this.postGPSPermission(true);
         }
-        else { this.postGPSPermission(true); }
-      }
-      else {
+      } else {
         await Toast.show({
-          text: 'User denied location permission'
-        })
+          text: "User denied location permission",
+        });
       }
     }
   }
 
   async postGPSPermission(canUseGPS: boolean) {
-    if (canUseGPS) { this.watchPosition(); }
-    else {
+    if (canUseGPS) {
+      this.watchPosition();
+    } else {
       await Toast.show({
-        text: 'Please turn on GPS to get location'
-      })
+        text: "Please turn on GPS to get location",
+      });
     }
   }
 
@@ -191,15 +195,19 @@ export class HomePage implements OnInit, AfterViewInit {
     try {
       this.watchId = Geolocation.watchPosition({}, (position, err) => {
         this.ngZone.run(() => {
-          if (err) { console.log('err', err); return; }
+          if (err) {
+            console.log("err", err);
+            return;
+          }
           this.lat = position.coords.latitude;
-          this.lng = position.coords.longitude
+          this.lng = position.coords.longitude;
           this.getAddress(this.lat, this.lng);
           this.clearWatch();
-        })
-      })
+        });
+      });
+    } catch (err) {
+      console.log("err", err);
     }
-    catch (err) { console.log('err', err) }
   }
 
   clearWatch() {
@@ -209,26 +217,25 @@ export class HomePage implements OnInit, AfterViewInit {
   }
 
   // get address using coordinates
-  getAddress(lat,long){
-    if(this.platform.is('android') || this.platform.is('ios'))
-    {
-      console.log('It is on device');
+  getAddress(lat, long) {
+    if (this.platform.is("android") || this.platform.is("ios")) {
+      console.log("It is on device");
       this.getGeoLocation(lat, long);
+    } else {
+      this.nativeGeocoder
+        .reverseGeocode(lat, long, this.nativeGeocoderOptions)
+        .then((res: NativeGeocoderResult[]) => {
+          this.address = this.pretifyAddress(res[0]);
+          console.log(this.address);
+        })
+        .catch((error: any) => {
+          alert("Error getting location" + JSON.stringify(error));
+        });
     }
-    else {
-    this.nativeGeocoder.reverseGeocode(lat, long, this.nativeGeocoderOptions)
-    .then((res: NativeGeocoderResult[]) => {
-      this.address = this.pretifyAddress(res[0]);
-      console.log(this.address);
-    })
-    .catch((error: any) => {
-      alert('Error getting location'+ JSON.stringify(error));
-    });
-  }
   }
 
   // address
-  pretifyAddress(address){
+  pretifyAddress(address) {
     let obj = [];
     let data = "";
     for (let key in address) {
@@ -236,8 +243,7 @@ export class HomePage implements OnInit, AfterViewInit {
     }
     obj.reverse();
     for (let val in obj) {
-      if(obj[val].length)
-      data += obj[val]+', ';
+      if (obj[val].length) data += obj[val] + ", ";
     }
     return address.slice(0, -2);
   }
@@ -246,7 +252,7 @@ export class HomePage implements OnInit, AfterViewInit {
     if (navigator.geolocation) {
       let geocoder = await new google.maps.Geocoder();
       let latlng = await new google.maps.LatLng(lat, lng);
-      let request:any = { latLng: latlng };
+      let request: any = { latLng: latlng };
 
       await geocoder.geocode(request, (results, status) => {
         if (status == google.maps.GeocoderStatus.OK) {
@@ -254,15 +260,15 @@ export class HomePage implements OnInit, AfterViewInit {
           this.zone.run(() => {
             if (result != null) {
               this.userCity = result.formatted_address;
-              this.autocomplete.input =  result.formatted_address;
+              this.autocomplete.input = result.formatted_address;
               this.PickUpformattedAddress = result.formatted_address;
               this.DropOffformattedRTAddress = result.formatted_address;
-              this.autocompletedpRT.input =  result.formatted_address;
-              if (type === 'reverseGeocode') {
+              this.autocompletedpRT.input = result.formatted_address;
+              if (type === "reverseGeocode") {
                 this.latLngResult = result.formatted_address;
               }
             }
-          })
+          });
         }
       });
     }
@@ -271,68 +277,64 @@ export class HomePage implements OnInit, AfterViewInit {
   async ngOnInit() {
     this.requestPermission();
 
-    this.autocomplete.input =  "";
+    this.autocomplete.input = "";
     this.PickUpformattedAddress = "";
-    this.getCurrentPosition(); 
+    this.getCurrentPosition();
 
     this.watchPosition();
     //this.getMyLocation();
   }
 
   ngAfterViewInit() {
-   //this.createMap(-34.397,150.644);
+    //this.createMap(-34.397,150.644);
   }
 
-  createMap(lat:number,lng:number)
-  {
+  createMap(lat: number, lng: number) {
     this.getGoogleMaps()
-    .then((googleMaps) => {
-      const mapEl = this.mapElementRef.nativeElement;
-      const map = new googleMaps.Map(mapEl, {
-        center: { lat:lat, lng:lng },
-        zoom: 8,
-      });
-
-      googleMaps.event.addListenerOnce(map, "idle", () => {
-        this.renderer.addClass(mapEl, "visible");
-      });
-
-      map.addListener("click", (event) => {
-        // const selectedCoords = {
-        //   lat: event.latLng.lat(),
-        //   lng: event.latLng.lng(),
-        // };
-        //this.modalCtrl.dismiss(selectedCoords);
-      });
-
-      this.directionsDisplay.setMap(map);
-
-    this.locationItems.forEach(function (loc) {
-      console.log(loc);
-      let marker = new google.maps.Marker({
-        map: map,
-        animation: google.maps.Animation.DROP,
-        position: {
-              lat: loc.lat,
-              lng: loc.lng
-            }
-      });
-
-      google.maps.event.addListener(marker, 'click', function () {
-        var infowindow = new google.maps.InfoWindow({
-          content: "<h4>Information!</h4>"
+      .then((googleMaps) => {
+        const mapEl = this.mapElementRef.nativeElement;
+        const map = new googleMaps.Map(mapEl, {
+          center: { lat: lat, lng: lng },
+          zoom: 8,
         });
-        infowindow.open(map, marker);
-      });
-  
-     }); 
 
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+        googleMaps.event.addListenerOnce(map, "idle", () => {
+          this.renderer.addClass(mapEl, "visible");
+        });
+
+        map.addListener("click", (event) => {
+          // const selectedCoords = {
+          //   lat: event.latLng.lat(),
+          //   lng: event.latLng.lng(),
+          // };
+          //this.modalCtrl.dismiss(selectedCoords);
+        });
+
+        this.directionsDisplay.setMap(map);
+
+        this.locationItems.forEach(function (loc) {
+          console.log(loc);
+          let marker = new google.maps.Marker({
+            map: map,
+            animation: google.maps.Animation.DROP,
+            position: {
+              lat: loc.lat,
+              lng: loc.lng,
+            },
+          });
+
+          google.maps.event.addListener(marker, "click", function () {
+            var infowindow = new google.maps.InfoWindow({
+              content: "<h4>Information!</h4>",
+            });
+            infowindow.open(map, marker);
+          });
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
- 
 
   private getGoogleMaps(): Promise<any> {
     const win = window as any;
@@ -357,8 +359,6 @@ export class HomePage implements OnInit, AfterViewInit {
       };
     });
   }
-
-  
 
   updateSearchResults() {
     if (this.autocomplete.input == "") {
@@ -390,7 +390,11 @@ export class HomePage implements OnInit, AfterViewInit {
         this.PickUpformattedAddress = results[0].formatted_address;
         this.DropOffformattedRTAddress = results[0].formatted_address;
         this.autocompletedpRT.input = results[0].formatted_address;
-        this.locationItems.push({lat:results[0].geometry.location.lat(), lng:results[0].geometry.location.lng(), locType:"PickUp"});
+        this.locationItems.push({
+          lat: results[0].geometry.location.lat(),
+          lng: results[0].geometry.location.lng(),
+          locType: "PickUp",
+        });
         console.log(this.PickUpformattedAddress);
       }
     });
@@ -424,10 +428,17 @@ export class HomePage implements OnInit, AfterViewInit {
         this.PickUpformattedRTAddress = results[0].formatted_address;
         this.autocompleteRT.input = results[0].formatted_address;
         console.log(this.DropOffformattedAddress);
-        this.locationItems.push({lat:results[0].geometry.location.lat(), lng:results[0].geometry.location.lng(), locType:"DropOff"});
-       // this.createMap(results[0].geometry.location.lat(),results[0].geometry.location.lng());
+        this.locationItems.push({
+          lat: results[0].geometry.location.lat(),
+          lng: results[0].geometry.location.lng(),
+          locType: "DropOff",
+        });
+        // this.createMap(results[0].geometry.location.lat(),results[0].geometry.location.lng());
 
-        this.calculateAndDisplayRoute(this.PickUpformattedAddress, this.DropOffformattedAddress);
+        this.calculateAndDisplayRoute(
+          this.PickUpformattedAddress,
+          this.DropOffformattedAddress
+        );
         this.autocompletedpItems = [];
       }
     });
@@ -461,7 +472,11 @@ export class HomePage implements OnInit, AfterViewInit {
         console.log(results[0].geometry.location);
         this.autocompleteRTItems = [];
         this.PickUpformattedRTAddress = results[0].formatted_address;
-        this.locationItems.push({lat:results[0].geometry.location.lat(), lng:results[0].geometry.location.lng(), locType:"PickUp"});
+        this.locationItems.push({
+          lat: results[0].geometry.location.lat(),
+          lng: results[0].geometry.location.lng(),
+          locType: "PickUp",
+        });
         console.log(this.PickUpformattedRTAddress);
       }
     });
@@ -495,68 +510,72 @@ export class HomePage implements OnInit, AfterViewInit {
         console.log(results[0].geometry.location);
         this.autocompletedpRTItems = [];
         this.DropOffformattedRTAddress = results[0].formatted_address;
-        this.locationItems.push({lat:results[0].geometry.location.lat(), lng:results[0].geometry.location.lng(), locType:"PickUp"});
+        this.locationItems.push({
+          lat: results[0].geometry.location.lat(),
+          lng: results[0].geometry.location.lng(),
+          locType: "PickUp",
+        });
         console.log(this.DropOffformattedRTAddress);
       }
     });
   }
 
-  calculateAndDisplayRoute(source:string, destination:string) {
+  calculateAndDisplayRoute(source: string, destination: string) {
     const that = this;
-    this.directionsService.route({
-      origin: source,
-      destination: destination,
-      travelMode: 'DRIVING'
-    }, (response, status) => {
-      if (status === 'OK') {
-        that.directionsDisplay.setDirections(response);
-      } else {
-        window.alert('Directions request failed due to ' + status);
-      }
-    });
-  }
-
-  getQuote()
-  {
-    let routeLocations = {
-      source:this.PickUpformattedAddress,
-      destination: this.DropOffformattedAddress,
-      date: this.myDate,
-      time: this.starttime,
-      returnRide:null
-    };
-    if(this.isReturnChecked)
-    {
-      routeLocations.returnRide = {
-            source:this.PickUpformattedRTAddress,
-            destination: this.DropOffformattedRTAddress,
-            date: this.myDateRT,
-            time: this.starttimeRT
+    this.directionsService.route(
+      {
+        origin: source,
+        destination: destination,
+        travelMode: "DRIVING",
+      },
+      (response, status) => {
+        if (status === "OK") {
+          that.directionsDisplay.setDirections(response);
+        } else {
+          window.alert("Directions request failed due to " + status);
         }
       }
-  
-    
-      let navigationExtras: NavigationExtras = {
-        queryParams: {
-          location: JSON.stringify(routeLocations)
-        }
-      };
-      this.router.navigate(['quote'], navigationExtras);
-  }
-
-  requestPermission() {
-    this.afMessaging.requestToken
-      .subscribe(
-      (token) => { console.log(token); },
-      (error) => { console.error(error); }
     );
   }
 
-  requiredReturnTick(isReturunCheck)
-  {
-    console.log(isReturunCheck);
-    console.log(this.isReturnChecked);
+  getQuote() {
+    let routeLocations = {
+      source: this.PickUpformattedAddress,
+      destination: this.DropOffformattedAddress,
+      date: this.myDate,
+      time: this.starttime,
+      returnRide: null,
+    };
+    if (this.isReturnChecked) {
+      routeLocations.returnRide = {
+        source: this.PickUpformattedRTAddress,
+        destination: this.DropOffformattedRTAddress,
+        date: this.myDateRT,
+        time: this.starttimeRT,
+      };
+    }
 
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        location: JSON.stringify(routeLocations),
+      },
+    };
+    this.router.navigate(["quote"], navigationExtras);
   }
 
+  requestPermission() {
+    this.afMessaging.requestToken.subscribe(
+      (token) => {
+        console.log(token);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+  requiredReturnTick(isReturunCheck) {
+    console.log(isReturunCheck);
+    console.log(this.isReturnChecked);
+  }
 }

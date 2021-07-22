@@ -1,30 +1,30 @@
 .titleBg {
-    background-color: #e6a315;
+  background-color: #e6a315;
 }
 
 .bjorney {
-    background-color: hsl(42, 42%, 83%);
+  background-color: hsl(42, 42%, 83%);
 }
 
 .map {
-    position: absolute;
-    height: 90% !important;
-    width: 92% !important;
-    background-color: transparent;
-    opacity: 0;
-    transition: opacity 150ms ease-in;
+  position: absolute;
+  height: 100% !important;
+  width: 92% !important;
+  background-color: transparent;
+  opacity: 0;
+  transition: opacity 150ms ease-in;
 }
 
 .map.visible {
-    opacity: 1;
+  opacity: 1;
 }
 
 .setAttention {
-    font-weight: bolder;
-    font-size: x-large;
-    color: red;
+  font-weight: bolder;
+  font-size: x-large;
+  color: red;
 }
 
 .mapContent {
-    height: 300px !important;
+  height: 300px !important;
 }

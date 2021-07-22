@@ -77,6 +77,10 @@ const routes: Routes = [
     path: 'rider-pickup',
     loadChildren: () => import('./rider-pickup/rider-pickup.module').then( m => m.RiderPickupPageModule)
   },
+  {
+    path: 'driver-navigation',
+    loadChildren: () => import('./driver-navigation/driver-navigation.module').then( m => m.DriverNavigationPageModule)
+  },
 
 
 
