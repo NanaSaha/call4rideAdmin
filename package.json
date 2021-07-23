@@ -61,7 +61,7 @@
         "google-libphonenumber": "^3.2.19",
         "guid-typescript": "^1.0.9",
         "ion-intl-tel-input": "^1.0.3",
-        "ionic-selectable": "^4.9.0",
+        "ionic-selectable": "^4.8.0",
         "ionic-tel-input": "^1.1.0",
         "marker-animate-unobtrusive": "^0.2.9",
         "rxjs": "~6.5.1",

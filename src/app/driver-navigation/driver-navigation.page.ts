@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  NgZone,
+} from "@angular/core";
 import { Plugins } from "@capacitor/core";
 import { AngularFireAuth } from "@angular/fire/auth";
 import { Observable } from "rxjs";
@@ -7,6 +13,7 @@ import {
   AngularFirestoreCollection,
 } from "@angular/fire/firestore";
 import { map } from "rxjs/operators";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 const { Geolocation } = Plugins;
 // import * as SlidingMarker from "marker-animate-unobtrusive";
 import * as SlidingMarker from "../../../node_modules/marker-animate-unobtrusive";
@@ -24,22 +31,42 @@ export class DriverNavigationPage implements OnInit {
   @ViewChild("directionsPanel") directionsPanel: ElementRef;
   directionsService = new google.maps.DirectionsService();
   directionsDisplay = new google.maps.DirectionsRenderer();
+  // directionsDisplay = new google.maps.DirectionsRenderer({
+  //   preserveViewport: true, //Added to preserve viewport
+  // });
   map: any;
   markers = [];
   markersArray = [];
+  firstmarkersArray = [];
   start = "chicago, il";
   end = "chicago, il";
   isTracking = false;
+  isNotClicked = true;
   watch: any;
   carMarker;
+  current_location: any;
+  directionForm: FormGroup;
 
-  //SIMULATONS
-  myLat: 5.7186191;
-  myLng: -0.024065399999999997;
-  public myRouteIndex: number;
-  public myRoute: any;
+  autocomplete: { input: string };
+  autocompleteItems: any[];
+  GoogleAutocomplete: any;
+  placeid: any;
 
-  constructor(private afAuth: AngularFireAuth, private afs: AngularFirestore) {}
+  constructor(
+    private afAuth: AngularFireAuth,
+    private afs: AngularFirestore,
+    public fb: FormBuilder,
+    public zone: NgZone
+  ) {
+    //AUTOCOMPLETE THINGS
+    this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
+    this.autocomplete = { input: "" };
+    this.autocompleteItems = [];
+
+    this.directionForm = this.fb.group({
+      destination: ["", Validators.required],
+    });
+  }
 
   ngOnInit() {
     this.mapData();
@@ -48,20 +75,44 @@ export class DriverNavigationPage implements OnInit {
   ionViewWillEnter() {
     this.loadMap();
     this.mapData();
-    this.directionsDisplay.setMap(this.map);
   }
 
   loadMap() {
-    let latlng = new google.maps.LatLng(51.9036442, 7.6673267);
+    Geolocation.getCurrentPosition().then(
+      (resp) => {
+        let lat = resp.coords.latitude;
+        let lng = resp.coords.longitude;
 
-    let mapOptions = {
-      center: latlng,
-      zoom: 15,
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
-      disableDefaultUI: true,
-    };
+        this.current_location = new google.maps.LatLng(lat, lng);
 
-    this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+        let mapOptions = {
+          center: this.current_location,
+          zoom: 15,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          disableDefaultUI: true,
+          // zoomControl: true,
+        };
+
+        this.map = new google.maps.Map(
+          this.mapElement.nativeElement,
+          mapOptions
+        );
+
+        //PUT MARKER ON MAP
+        this.carMarker = new SlidingMarker({
+          map: this.map,
+          position: this.current_location,
+          icon: "/assets/image/person.png",
+          duration: 1000,
+          easing: "easeOutExpo",
+        });
+
+        this.firstmarkersArray.push(this.carMarker);
+      },
+      (err) => {
+        console.log("Geolocation err: " + err);
+      }
+    );
   }
 
   mapData() {
@@ -98,8 +149,9 @@ export class DriverNavigationPage implements OnInit {
 
       if (this.markersArray.length >= 1) {
         console.log("----ARRAY > 1----");
+        this.firstmarkersArray.map((marker) => marker.setMap(null));
         this.carMarker.setPosition(latlng);
-        this.carMarker.setDuration(5000);
+        this.carMarker.setDuration(2000);
         this.carMarker.setEasing("linear");
         this.map.setCenter(latlng);
       } else if (this.markersArray.length < 1) {
@@ -110,7 +162,7 @@ export class DriverNavigationPage implements OnInit {
           map: this.map,
           position: latlng,
           icon: "/assets/image/car.png",
-          duration: 5000,
+          duration: 2000,
           easing: "easeOutExpo",
         });
         this.markersArray.push(this.carMarker);
@@ -132,22 +184,14 @@ export class DriverNavigationPage implements OnInit {
           position.timestamp
         );
 
-        // var locations = {
-        //   lat: position.coords.latitude,
-        //   lng: position.coords.longitude,
-        // };
-        // this.updateMap(Array.of(locations));
-        // console.log("CALLING TRACKKINNg ----------------");
-        // this.mapData();
+        this.map.setZoom(15);
+
         // let end = new google.maps.LatLng(
         //   position.coords.latitude,
         //   position.coords.longitude
         // );
-        // this.calculateAndDisplayRoute(start, end);
-        // console.log(
-        //   "RUNNIN CALCULATE AND DISPLAY",
-        //   this.calculateAndDisplayRoute(start, end)
-        // );
+
+        // this.calculateAndDisplayRoute(this.current_location, end);
       }
     });
   }
@@ -177,12 +221,6 @@ export class DriverNavigationPage implements OnInit {
     this.locationsCollection.doc(pos.id).delete();
   }
 
-  onButtonClick() {
-    let position = this.carMarker.getPosition();
-    console.log("POSITION FROM MARKER", position);
-    this.carMarker.setPosition(position);
-  }
-
   // startNavigating() {
   //   let directionsService = new google.maps.DirectionsService();
   //   let directionsDisplay = new google.maps.DirectionsRenderer();
@@ -206,107 +244,79 @@ export class DriverNavigationPage implements OnInit {
   //   );
   // }
 
-  calculateAndDisplayRoute(start, end) {
-    console.log("START AND END", start, end);
+  calculateAndDisplayRoute(formValues) {
+    let destination = formValues.description;
+    console.log("START AND END", this.current_location, formValues);
+    this.isNotClicked = false;
+
     this.directionsService.route(
       {
-        origin: start,
-        destination: end,
+        origin: this.current_location,
+        destination: destination,
         travelMode: google.maps.TravelMode["DRIVING"],
       },
       (response, status) => {
         if (status === "OK") {
           this.directionsDisplay.setDirections(response);
-          console.log(
-            "DIRECTIONS-----",
-            this.directionsDisplay.setDirections(response)
-          );
+
+          console.log("DIRECTIONS RESPONSE-----", response);
         } else {
           window.alert("Directions request failed due to " + status);
         }
       }
     );
+    this.directionsDisplay.setMap(this.map);
+    // this.map.setZoom(10);
+    //preserveViewport: true;
+    //this.map.setCenter(this.current_location);
+    this.autocompleteItems = [];
+    this.autocomplete.input = "";
   }
 
-  ////SIMULATIONS
-  // private cars1 = {
-  //   cars: [
-  //     {
-  //       id: 1,
-  //       coord: {
-  //         lat: -26.097551,
-  //         lng: 28.050939,
-  //       },
-  //     },
-  //     {
-  //       id: 2,
-  //       coord: {
-  //         lat: -26.102831,
-  //         lng: 28.059951,
-  //       },
-  //     },
-  //   ],
-  // };
+  toggle() {
+    this.isNotClicked = false;
+  }
 
-  // getSegmentedDirections(directions) {
-  //   let route = directions.routes[0];
-  //   let legs = route.legs;
-  //   let path = [];
-  //   let increments = [];
-  //   let duration = 0;
+  //AUTOCOMPLETE
+  //AUTOCOMPLETE, SIMPLY LOAD THE PLACE USING GOOGLE PREDICTIONS AND RETURNING THE ARRAY.
+  UpdateSearchResults() {
+    var options = {
+      types: ["(cities)"],
+      componentRestrictions: { country: "gh" },
+    };
 
-  //   let numOfLegs = legs.length;
+    console.log("INUT FROM AUTONOCOM", this.autocomplete.input);
+    if (this.autocomplete.input == "") {
+      this.autocompleteItems = [];
+      return;
+    }
+    this.GoogleAutocomplete.getPlacePredictions(
+      { input: this.autocomplete.input, options },
+      (predictions, status) => {
+        this.autocompleteItems = [];
+        this.zone.run(() => {
+          predictions.forEach((prediction) => {
+            this.autocompleteItems.push(prediction);
+          });
+        });
+      }
+    );
+  }
 
-  //   // work backwards though each leg in directions route
-  //   while (numOfLegs--) {
-  //     let leg = legs[numOfLegs];
-  //     let steps = leg.steps;
-  //     let numOfSteps = steps.length;
+  //wE CALL THIS FROM EACH ITEM.
+  SelectSearchResult(item) {
+    ///WE CAN CONFIGURE MORE COMPLEX FUNCTIONS SUCH AS UPLOAD DATA TO FIRESTORE OR LINK IT TO SOMETHING
+    // alert(JSON.stringify(item));
+    this.placeid = item.place_id;
+    let destination = item.description;
+    console.log("Destinaton Location", destination);
+    this.autocompleteItems = [];
+    this.autocomplete.input = "";
+  }
 
-  //     while (numOfSteps--) {
-  //       let step = steps[numOfSteps];
-  //       let points = step.path;
-  //       let numOfPoints = points.length;
-
-  //       duration += step.duration.value;
-
-  //       while (numOfPoints--) {
-  //         let point = points[numOfPoints];
-
-  //         path.push(point);
-
-  //         increments.unshift({
-  //           position: point, // car position
-  //           time: duration, // time left before arrival
-  //           path: path.slice(0), // clone array to prevent referencing final path array
-  //         });
-  //       }
-  //     }
-  //   }
-
-  //   return increments;
-  // }
-
-  // findPickupCar(pickupLocation) {
-  //   this.myRouteIndex = 0;
-
-  //   let car = this.cars1.cars[0]; // pick one of the cars to simulate pickupLocation
-  //   let start = new google.maps.LatLng(car.coord.lat, car.coord.lng);
-  //   let end = pickupLocation;
-
-  //   return this.simulateRoute(start, end);
-  // }
-
-  // simulateRoute(start, end) {
-  //   return Observable.create((observable) => {
-  //     this.calculateRoute(start, end).subscribe((directions) => {
-  //       // get route path
-  //       this.myRoute = this.getSegmentedDirections(directions);
-  //       // return pickup car
-  //       this.getPickupCar().subscribe((car) => {
-  //         observable.next(car); // first increment in car path
-  //       });
-  //     });
-  //   });
-  // }
+  //lET'S BE CLEAN! THIS WILL JUST CLEAN THE LIST WHEN WE CLOSE THE SEARCH BAR.
+  ClearAutocomplete() {
+    this.autocompleteItems = [];
+    this.autocomplete.input = "";
+  }
 }

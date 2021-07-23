@@ -1,38 +1,87 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar>
     <ion-title>Driver Navigation</ion-title>
   </ion-toolbar>
+</ion-header> -->
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-searchbar
+      [(ngModel)]="autocomplete.input"
+      (ionInput)="UpdateSearchResults()"
+      placeholder="Enter your Destination"
+      (ionClear)="ClearAutocomplete()"
+    ></ion-searchbar>
+  </ion-toolbar>
+  <ion-list [hidden]="autocompleteItems.length == 0">
+    <ion-item
+      *ngFor="let item of autocompleteItems"
+      tappable
+      (click)="calculateAndDisplayRoute(item)"
+    >
+      {{ item.description }}
+    </ion-item>
+  </ion-list>
+
+  <!-- <ion-list *ngIf="!isNotClicked">
+  
+  </ion-list> -->
 </ion-header>
 
 <ion-content>
-  <!-- <ion-card>
-    <ion-card-content>
-      <div #directionsPanel></div>
-    </ion-card-content>
-  </ion-card> -->
-  <!-- <div id="floating-panel">
-    <b>Start: </b>
-    <select
-      [(ngModel)]="start"
-      id="start"
-      (change)="calculateAndDisplayRoute(start,end)"
+  <!-- <ion-list>
+    <ion-label>Destination</ion-label>
+    <ion-item>
+      <ionic-selectable
+        [(ngModel)]="autocomplete.input"
+        (ionInput)="UpdateSearchResults()"
+        [items]="autocompleteItems"
+        itemValueField="place_id"
+        itemTextField="description"
+        [canSearch]="true"
+        (onChange)="calculateAndDisplayRoute($event)"
+      >
+      </ionic-selectable>
+    </ion-item>
+  </ion-list> -->
+  <!-- <div id="floating-panel"> -->
+  <!-- <form
+    [formGroup]="directionForm"
+    (ngSubmit)="calculateAndDisplayRoute(directionForm.value)"
+  >
+    <ion-item>
+      <ion-label position="floating">Destination</ion-label>
+      <ion-input formControlName="destination"></ion-input>
+    </ion-item>
+    <ion-button type="submit" [disabled]="!directionForm.valid"
+      >Get Directions</ion-button
     >
-      <option value="chicago, il">Chicago</option>
-      <option value="st louis, mo">St Louis</option>
-      <option value="joplin, mo">Joplin, MO</option></select
-    ><br />
-    <b>End: </b>
-    <select
-      [(ngModel)]="end"
-      id="end"
-      (change)="calculateAndDisplayRoute(start,end)"
+  </form> -->
+
+  <!-- <ion-list [hidden]="autocompleteItems.length == 0">
+    <ion-item
+      *ngFor="let item of autocompleteItems"
+      tappable
+      (click)="SelectSearchResult(item)"
     >
-      <option value="chicago, il">Chicago</option>
-      <option value="st louis, mo">St Louis</option>
-      <option value="joplin, mo">Joplin, MO</option>
-      <option value="oklahoma city, ok">Oklahoma City</option>
-    </select>
-  </div> -->
+      {{ item.description }}
+    </ion-item>
+  </ion-list> -->
+  <!-- </div> -->
+  <!-- <ion-button
+    color="warning"
+    expand="block"
+    (click)="toggle()"
+    *ngIf="isNotClicked"
+  >
+    <ion-icon name="locate" slot="start"></ion-icon>
+    Not Clicked
+  </ion-button>
+
+  <ion-button color="danger" expand="block" *ngIf="!isNotClicked">
+    <ion-icon name="hand-right-outline" slot="start"></ion-icon>
+
+    Clicked
+  </ion-button> -->
 
   <div #map id="map"></div>
 
@@ -44,7 +93,7 @@
       *ngIf="!isTracking"
     >
       <ion-icon name="locate" slot="start"></ion-icon>
-      Start Tracking
+      Start Navigating
     </ion-button>
 
     <ion-button
@@ -55,7 +104,7 @@
     >
       <ion-icon name="hand-right-outline" slot="start"></ion-icon>
 
-      Stop Tracking .......
+      Stop Navigating .......
     </ion-button>
   </div>
 

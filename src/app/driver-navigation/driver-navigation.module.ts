@@ -1,20 +1,24 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
-import { IonicModule } from '@ionic/angular';
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
-import { DriverNavigationPageRoutingModule } from './driver-navigation-routing.module';
+import { IonicModule } from "@ionic/angular";
 
-import { DriverNavigationPage } from './driver-navigation.page';
+import { DriverNavigationPageRoutingModule } from "./driver-navigation-routing.module";
+
+import { DriverNavigationPage } from "./driver-navigation.page";
+import { IonicSelectableModule } from "ionic-selectable";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    DriverNavigationPageRoutingModule
+    ReactiveFormsModule,
+    DriverNavigationPageRoutingModule,
+    IonicSelectableModule,
   ],
-  declarations: [DriverNavigationPage]
+  declarations: [DriverNavigationPage],
 })
 export class DriverNavigationPageModule {}
