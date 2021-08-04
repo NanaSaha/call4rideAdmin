@@ -5,6 +5,7 @@ import {
   ViewChild,
   NgZone,
 } from "@angular/core";
+import { ActivatedRoute, NavigationExtras, Router } from "@angular/router";
 import { Plugins } from "@capacitor/core";
 import { AngularFireAuth } from "@angular/fire/auth";
 import { Observable } from "rxjs";
@@ -17,6 +18,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 const { Geolocation } = Plugins;
 // import * as SlidingMarker from "marker-animate-unobtrusive";
 import * as SlidingMarker from "../../../node_modules/marker-animate-unobtrusive";
+import { AuthService } from "../auth/auth.service";
 
 @Component({
   selector: "app-driver-navigation",
@@ -33,6 +35,9 @@ export class DriverNavigationPage implements OnInit {
   directionsDisplay = new google.maps.DirectionsRenderer();
   // directionsDisplay = new google.maps.DirectionsRenderer({
   //   preserveViewport: true, //Added to preserve viewport
+  // polylineOptions: {
+  //   strokeColor: "red";
+  // };
   // });
   map: any;
   markers = [];
@@ -51,13 +56,21 @@ export class DriverNavigationPage implements OnInit {
   autocompleteItems: any[];
   GoogleAutocomplete: any;
   placeid: any;
+  userId: string;
+  rider_details;
+  endAddress: any;
+  startAddress: any;
 
   constructor(
     private afAuth: AngularFireAuth,
     private afs: AngularFirestore,
     public fb: FormBuilder,
-    public zone: NgZone
+    private authService: AuthService,
+    public zone: NgZone,
+    private activatedRoute: ActivatedRoute,
+    private router: Router
   ) {
+    this.loadMap();
     //AUTOCOMPLETE THINGS
     this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
     this.autocomplete = { input: "" };
@@ -69,12 +82,39 @@ export class DriverNavigationPage implements OnInit {
   }
 
   ngOnInit() {
+    this.loadMap();
     this.mapData();
+    this.authService.userId.subscribe((userId) => {
+      if (!userId) {
+        throw new Error("User not found!");
+      }
+      this.userId = userId;
+      console.log("USER ID IS::: ", this.userId);
+    });
+
+    this.activatedRoute.queryParams.subscribe(
+      (params) => {
+        if (params && params.message) {
+          this.rider_details = JSON.parse(params.message);
+          console.log(params.message);
+          if (this.rider_details != undefined && this.rider_details != null) {
+            console.log("RIDER DETAILS:::: ", this.rider_details);
+            this.endAddress = this.rider_details.endAddress;
+            this.startAddress = this.rider_details.startAddress;
+            console.log("START ADDRESS:::: ", this.startAddress);
+            console.log("END ADDRESS:::: ", this.endAddress);
+          }
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 
   ionViewWillEnter() {
     this.loadMap();
-    this.mapData();
+    // this.mapData();
   }
 
   loadMap() {
@@ -134,40 +174,41 @@ export class DriverNavigationPage implements OnInit {
 
     // Update MAp
 
-    this.locations.subscribe((locations) => {
-      console.log("new Locations updating ", locations);
-      this.updateMap(locations);
+    this.locations.subscribe((location) => {
+      // console.log("new Locations updating ", location[0].lat);
+      this.updateMap(location);
     });
   }
 
   updateMap(locations) {
-    console.log("----INSIDE UPDATE MAP----");
+    console.log("----INSIDE UPDATE MAP----", locations);
+    if (locations.length > 0) {
+      for (let loc of locations) {
+        let latlng = new google.maps.LatLng(loc.lat, loc.lng);
+        console.log("MARKERS ARRAY LENTHG", this.markersArray.length);
 
-    for (let loc of locations) {
-      let latlng = new google.maps.LatLng(loc.lat, loc.lng);
-      console.log("MARKERS ARRAY LENTHG", this.markersArray.length);
-
-      if (this.markersArray.length >= 1) {
-        console.log("----ARRAY > 1----");
-        this.firstmarkersArray.map((marker) => marker.setMap(null));
-        this.carMarker.setPosition(latlng);
-        this.carMarker.setDuration(2000);
-        this.carMarker.setEasing("linear");
-        this.map.setCenter(latlng);
-      } else if (this.markersArray.length < 1) {
-        console.log("----CREATING NEW MARKER----");
-        this.markersArray.map((marker) => marker.setMap(null));
-        this.markersArray = [];
-        this.carMarker = new SlidingMarker({
-          map: this.map,
-          position: latlng,
-          icon: "/assets/image/car.png",
-          duration: 2000,
-          easing: "easeOutExpo",
-        });
-        this.markersArray.push(this.carMarker);
-      } else {
-        console.log("ARRAY IS NOT IN RANGE");
+        if (this.markersArray.length >= 1) {
+          console.log("----ARRAY > 1----");
+          this.firstmarkersArray.map((marker) => marker.setMap(null));
+          this.carMarker.setPosition(latlng);
+          this.carMarker.setDuration(2000);
+          this.carMarker.setEasing("linear");
+          this.map.setCenter(latlng);
+        } else if (this.markersArray.length < 1) {
+          console.log("----CREATING NEW MARKER----");
+          this.markersArray.map((marker) => marker.setMap(null));
+          this.markersArray = [];
+          this.carMarker = new SlidingMarker({
+            map: this.map,
+            position: latlng,
+            icon: "/assets/image/car.png",
+            duration: 2000,
+            easing: "easeOutExpo",
+          });
+          this.markersArray.push(this.carMarker);
+        } else {
+          console.log("ARRAY IS NOT IN RANGE");
+        }
       }
     }
   }
@@ -181,7 +222,8 @@ export class DriverNavigationPage implements OnInit {
         this.addNewLocation(
           position.coords.latitude,
           position.coords.longitude,
-          position.timestamp
+          position.timestamp,
+          this.userId
         );
 
         this.map.setZoom(15);
@@ -191,7 +233,7 @@ export class DriverNavigationPage implements OnInit {
         //   position.coords.longitude
         // );
 
-        // this.calculateAndDisplayRoute(this.current_location, end);
+        // this.calculateAndDisplayRoute(this.endAddress);
       }
     });
   }
@@ -202,18 +244,19 @@ export class DriverNavigationPage implements OnInit {
     });
   }
 
-  addNewLocation(lat, lng, timestamp) {
+  addNewLocation(lat, lng, timestamp, userId) {
     this.locationsCollection.add({
       lat,
       lng,
       timestamp,
+      userId,
     });
 
     // let position = new google.maps.LatLng(lat, lng);
     // this.carMarker.setPosition(position);
 
-    //let position = new google.maps.LatLng(lat, lng);
-    //this.map.setCenter(position);
+    let position = new google.maps.LatLng(lat, lng);
+    this.map.setCenter(position);
     // this.map.setZoom(15);
   }
 
@@ -244,9 +287,9 @@ export class DriverNavigationPage implements OnInit {
   //   );
   // }
 
-  calculateAndDisplayRoute(formValues) {
-    let destination = formValues.description;
-    console.log("START AND END", this.current_location, formValues);
+  calculateAndDisplayRoute(destination) {
+    console.log("START::", this.current_location);
+    console.log("END:::", destination);
     this.isNotClicked = false;
 
     this.directionsService.route(

@@ -1,22 +1,32 @@
-import { Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Platform } from '@ionic/angular';
-import {  Capacitor,Plugins } from '@capacitor/core';
+import {
+  Component,
+  ElementRef,
+  NgZone,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from "@angular/core";
+import { ActivatedRoute, NavigationExtras, Router } from "@angular/router";
+import { Platform } from "@ionic/angular";
+import { Capacitor, Plugins } from "@capacitor/core";
 const { Geolocation, Toast } = Plugins;
 
-import { NativeGeocoder, NativeGeocoderResult, NativeGeocoderOptions } from '@ionic-native/native-geocoder/ngx';
+import {
+  NativeGeocoder,
+  NativeGeocoderResult,
+  NativeGeocoderOptions,
+} from "@ionic-native/native-geocoder/ngx";
 
-import { AuthService } from '../auth/auth.service';
-import { DriverRegService } from '../driver-registration/driver-reg.service';
-import { RideRequestsService } from '../ride-requests/ride-requests.service';
+import { AuthService } from "../auth/auth.service";
+import { DriverRegService } from "../driver-registration/driver-reg.service";
+import { RideRequestsService } from "../ride-requests/ride-requests.service";
 
 @Component({
-  selector: 'app-rider-pickup',
-  templateUrl: './rider-pickup.page.html',
-  styleUrls: ['./rider-pickup.page.scss'],
+  selector: "app-rider-pickup",
+  templateUrl: "./rider-pickup.page.html",
+  styleUrls: ["./rider-pickup.page.scss"],
 })
 export class RiderPickupPage implements OnInit {
-
   @ViewChild("map", { static: false }) mapElementRef: ElementRef;
   map: any;
   information: any;
@@ -25,44 +35,43 @@ export class RiderPickupPage implements OnInit {
   directionsService: any;
   directionsDisplay = new google.maps.DirectionsRenderer();
   driver: any;
-  message:any;
+  message: any;
   driverId: any = 0;
   latitude: number;
   longitude: number;
   address: any;
 
-
-   // geocoder options
-   nativeGeocoderOptions: NativeGeocoderOptions = {
+  // geocoder options
+  nativeGeocoderOptions: NativeGeocoderOptions = {
     useLocale: true,
-    maxResults: 5
+    maxResults: 5,
   };
   userCity: string;
   latLngResult: string;
 
-
-  constructor( 
-    private rideRequestsService:RideRequestsService,
+  constructor(
+    private rideRequestsService: RideRequestsService,
     public zone: NgZone,
     private authService: AuthService,
-    private driverSvr:DriverRegService,
+    private driverSvr: DriverRegService,
     private renderer: Renderer2,
     private platform: Platform,
     private activatedRoute: ActivatedRoute,
     private nativeGeocoder: NativeGeocoder,
-    ) {
-      this.directionsService = new google.maps.DirectionsService();
-      this.directionsDisplay = new google.maps.DirectionsRenderer();
-     }
+    private router: Router
+  ) {
+    this.directionsService = new google.maps.DirectionsService();
+    this.directionsDisplay = new google.maps.DirectionsRenderer();
+  }
 
   ngOnInit() {
-    this.activatedRoute.queryParams.subscribe((params) => {
-      if (params && params.message) {
-        this.message = JSON.parse(params.message);
-        console.log(params.message)
-        if(this.message != undefined && this.message != null)
-        {
-          this.getCurrentPosition();
+    this.activatedRoute.queryParams.subscribe(
+      (params) => {
+        if (params && params.message) {
+          this.message = JSON.parse(params.message);
+          console.log(params.message);
+          if (this.message != undefined && this.message != null) {
+            this.getCurrentPosition();
             //this.driverId =  this.message.data.driverId;
             //   if(this.message.data.driverId != 0){
             //     this.driverSvr.getDriverById(this.message.data.driverId).subscribe((drivers)=>{
@@ -72,17 +81,30 @@ export class RiderPickupPage implements OnInit {
             //       {
             //         this.driver = drivers[0];
             //       }
-            //       this.calculateRoute(this.ride.startAddress,this.ride.endAddress);         
-            //     }); 
+            //       this.calculateRoute(this.ride.startAddress,this.ride.endAddress);
+            //     });
             //   });
             //  }
+          }
         }
+      },
+      (err) => {
+        console.log(err);
       }
-    },err=>{
-      console.log(err)
-    });
-   
-      this.createMap(-34.397, 150.644);
+    );
+
+    this.createMap(-34.397, 150.644);
+  }
+
+  drive(message) {
+    if (message !== null && message !== undefined) {
+      let navigationExtras: NavigationExtras = {
+        queryParams: {
+          message: JSON.stringify(message),
+        },
+      };
+      this.router.navigate(["driver-navigation"], navigationExtras);
+    }
   }
 
   calculateRoute(source: string, destination: string) {
@@ -100,7 +122,6 @@ export class RiderPickupPage implements OnInit {
           this.distance = that.distance;
 
           that.directionsDisplay.setDirections(response);
-                 
         } else {
           window.alert("Directions request failed due to " + status);
         }
@@ -108,46 +129,46 @@ export class RiderPickupPage implements OnInit {
     );
   }
 
-  async getCurrentPosition()
-  {
+  async getCurrentPosition() {
     // this.platform.ready().then(() => {
-      
-      Geolocation.getCurrentPosition().then((resp) => {
-      console.log(resp)
-      this.latitude = resp.coords.latitude;
-      this.longitude = resp.coords.longitude;
-      this.getAddress(this.latitude, this.longitude);
-     }).catch((error) => {
-       console.log('Error getting location', error);
-     });
+
+    Geolocation.getCurrentPosition()
+      .then((resp) => {
+        console.log(resp);
+        this.latitude = resp.coords.latitude;
+        this.longitude = resp.coords.longitude;
+        this.getAddress(this.latitude, this.longitude);
+      })
+      .catch((error) => {
+        console.log("Error getting location", error);
+      });
     // })
   }
 
-   // get address using coordinates
-   getAddress(lat,long){
-    if(this.platform.is('android') || this.platform.is('ios'))
-    {
-      console.log('It is on device');
+  // get address using coordinates
+  getAddress(lat, long) {
+    if (this.platform.is("android") || this.platform.is("ios")) {
+      console.log("It is on device");
       this.getGeoLocation(lat, long);
+    } else {
+      this.nativeGeocoder
+        .reverseGeocode(lat, long, this.nativeGeocoderOptions)
+        .then((res: NativeGeocoderResult[]) => {
+          this.address = this.pretifyAddress(res[0]);
+          console.log(this.address);
+          this.calculateRoute(this.address, this.message.startAddress);
+        })
+        .catch((error: any) => {
+          alert("Error getting location" + JSON.stringify(error));
+        });
     }
-    else {
-    this.nativeGeocoder.reverseGeocode(lat, long, this.nativeGeocoderOptions)
-    .then((res: NativeGeocoderResult[]) => {
-      this.address = this.pretifyAddress(res[0]);
-      console.log(this.address);
-      this.calculateRoute(this.address,this.message.startAddress); 
-    })
-    .catch((error: any) => {
-      alert('Error getting location'+ JSON.stringify(error));
-    });
-  }
   }
   riderStartAddress(address: any, riderStartAddress: any) {
-    throw new Error('Method not implemented.');
+    throw new Error("Method not implemented.");
   }
 
   // address
-  pretifyAddress(address){
+  pretifyAddress(address) {
     let obj = [];
     let data = "";
     for (let key in address) {
@@ -155,8 +176,7 @@ export class RiderPickupPage implements OnInit {
     }
     obj.reverse();
     for (let val in obj) {
-      if(obj[val].length)
-      data += obj[val]+', ';
+      if (obj[val].length) data += obj[val] + ", ";
     }
     return address.slice(0, -2);
   }
@@ -165,7 +185,7 @@ export class RiderPickupPage implements OnInit {
     if (navigator.geolocation) {
       let geocoder = await new google.maps.Geocoder();
       let latlng = await new google.maps.LatLng(lat, lng);
-      let request:any = { latLng: latlng };
+      let request: any = { latLng: latlng };
 
       geocoder.geocode(request, (results, status) => {
         if (status == google.maps.GeocoderStatus.OK) {
@@ -174,12 +194,12 @@ export class RiderPickupPage implements OnInit {
             if (result != null) {
               this.userCity = result.formatted_address;
               console.log(this.userCity);
-              this.calculateRoute(this.userCity,this.message.startAddress); 
+              this.calculateRoute(this.userCity, this.message.startAddress);
               // this.autocomplete.input =  result.formatted_address;
               // this.PickUpformattedAddress = result.formatted_address;
               // this.DropOffformattedRTAddress = result.formatted_address;
               // this.autocompletedpRT.input =  result.formatted_address;
-              if (type === 'reverseGeocode') {
+              if (type === "reverseGeocode") {
                 this.latLngResult = result.formatted_address;
               }
             }
@@ -189,7 +209,6 @@ export class RiderPickupPage implements OnInit {
     }
   }
 
-  
   ngAfterViewInit() {
     this.createMap(-34.397, 150.644);
   }
@@ -207,11 +226,9 @@ export class RiderPickupPage implements OnInit {
           this.renderer.addClass(mapEl, "visible");
         });
 
-        map.addListener("click", (event) => {
-          
-        });
+        map.addListener("click", (event) => {});
 
-        this.directionsDisplay.setMap(map);  
+        this.directionsDisplay.setMap(map);
       })
       .catch((err) => {
         console.log(err);
@@ -241,7 +258,4 @@ export class RiderPickupPage implements OnInit {
       };
     });
   }
-
-
-
 }

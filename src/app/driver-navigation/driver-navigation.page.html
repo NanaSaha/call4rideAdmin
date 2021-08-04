@@ -5,6 +5,9 @@
 </ion-header> -->
 <ion-header>
   <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
     <ion-searchbar
       [(ngModel)]="autocomplete.input"
       (ionInput)="UpdateSearchResults()"
@@ -16,15 +19,11 @@
     <ion-item
       *ngFor="let item of autocompleteItems"
       tappable
-      (click)="calculateAndDisplayRoute(item)"
+      (click)="calculateAndDisplayRoute(item.description)"
     >
       {{ item.description }}
     </ion-item>
   </ion-list>
-
-  <!-- <ion-list *ngIf="!isNotClicked">
-  
-  </ion-list> -->
 </ion-header>
 
 <ion-content>
@@ -87,6 +86,16 @@
 
   <div class="buttonOnMap">
     <ion-button
+      color="dark"
+      expand="block"
+      (click)="calculateAndDisplayRoute(startAddress)"
+      *ngIf="!isTracking"
+    >
+      <ion-icon name="locate" slot="start"></ion-icon>
+      Show Pickup Location Route
+    </ion-button>
+
+    <ion-button
       color="warning"
       expand="block"
       (click)="startTracking()"
@@ -114,6 +123,8 @@
         <ion-label text-wrap>
           <p>Lat: {{pos.lat}}</p>
           <p>Lng: {{pos.lng}}</p>
+          <p>userId: {{pos.userId}}</p>
+
           <p>{{pos.timestamp | date: 'short'}}</p>
         </ion-label>
       </ion-item>

@@ -81,6 +81,10 @@ const routes: Routes = [
     path: 'driver-navigation',
     loadChildren: () => import('./driver-navigation/driver-navigation.module').then( m => m.DriverNavigationPageModule)
   },
+  {
+    path: 'watch-driver-navigation',
+    loadChildren: () => import('./watch-driver-navigation/watch-driver-navigation.module').then( m => m.WatchDriverNavigationPageModule)
+  },
 
 
 

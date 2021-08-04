@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Watch Driver Navigation</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div #map id="map"></div>
+
+  <div class="buttonOnMap">
+    <ion-button
+      color="warning"
+      expand="block"
+      (click)="calculateAndDisplayRoute(accra)"
+    >
+      <ion-icon name="locate" slot="start"></ion-icon>
+      Check distance
+    </ion-button>
+  </div>
+
+  <!-- <div class="buttonOnMap">
+    <ion-button
+      color="warning"
+      expand="block"
+      (click)="startTracking()"
+      *ngIf="!isTracking"
+    >
+      <ion-icon name="locate" slot="start"></ion-icon>
+      Start Navigating
+    </ion-button>
+
+    <ion-button
+      color="danger"
+      expand="block"
+      (click)="stopTracking()"
+      *ngIf="isTracking"
+    >
+      <ion-icon name="hand-right-outline" slot="start"></ion-icon>
+
+      Stop Navigating .......
+    </ion-button>
+  </div> -->
+</ion-content>
