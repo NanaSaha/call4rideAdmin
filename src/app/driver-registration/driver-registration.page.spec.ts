@@ -1,24 +1,24 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
+import { async, ComponentFixture, TestBed } from "@angular/core/testing";
+import { IonicModule } from "@ionic/angular";
 
-import { DrverRegistrationPage } from './driver-registration.page';
+import { DriverRegistrationPage } from "./driver-registration.page";
 
-describe('DriverRegistrationPage', () => {
-  let component: DrverRegistrationPage;
-  let fixture: ComponentFixture<DrverRegistrationPage>;
+describe("DriverRegistrationPage", () => {
+  let component: DriverRegistrationPage;
+  let fixture: ComponentFixture<DriverRegistrationPage>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DrverRegistrationPage ],
-      imports: [IonicModule.forRoot()]
+      declarations: [DriverRegistrationPage],
+      imports: [IonicModule.forRoot()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DrverRegistrationPage);
+    fixture = TestBed.createComponent(DriverRegistrationPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

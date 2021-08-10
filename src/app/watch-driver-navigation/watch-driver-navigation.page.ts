@@ -17,6 +17,7 @@ import { map } from "rxjs/operators";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import * as SlidingMarker from "../../../node_modules/marker-animate-unobtrusive";
 import { AuthService } from "../auth/auth.service";
+import { DriverRegService } from "../driver-registration/driver-reg.service";
 
 const { Geolocation } = Plugins;
 
@@ -54,6 +55,7 @@ export class WatchDriverNavigationPage implements OnInit {
   intervalId: number;
 
   constructor(
+    private driverSvr: DriverRegService,
     private afAuth: AngularFireAuth,
     private afs: AngularFirestore,
     public fb: FormBuilder,
@@ -77,6 +79,10 @@ export class WatchDriverNavigationPage implements OnInit {
     });
     this.loadMap();
     this.mapData();
+
+    // this.driverSvr.getDriverJobDocId(this.userId).subscribe((driverJobs) => {
+    //   console.log("DRIVER JOBS::: ", driverJobs);
+    // });
   }
 
   mapData() {
@@ -84,24 +90,24 @@ export class WatchDriverNavigationPage implements OnInit {
       ref.where("userId", "==", this.userId)
     );
 
-    // this.driverCollection = this.afs.collection("drivers");
+    this.driverCollection = this.afs.collection("rides");
     // this.driverCollection = this.afs
     //   .collection("drivers")
     //   .doc(this.userId)
     //   .collection("jobs", (ref) => ref.orderBy("assignedDate"));
 
-    // this.drivers = this.driverCollection.snapshotChanges().pipe(
-    //   map((actions) =>
-    //     actions.map((a) => {
-    //       const data = a.payload.doc.data();
-    //       const id = a.payload.doc.id;
-    //       return { id, ...data };
-    //     })
-    //   )
-    // );
-    // this.drivers.subscribe((driver) => {
-    //   console.log("DRIVERRSSS:::::: ", driver);
-    // });
+    this.drivers = this.driverCollection.snapshotChanges().pipe(
+      map((actions) =>
+        actions.map((a) => {
+          const data = a.payload.doc.data();
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        })
+      )
+    );
+    this.drivers.subscribe((driver) => {
+      console.log("DRIVERRSSS:::::: ", driver);
+    });
 
     // .orderBy("timestamp", "desc")
 
@@ -135,7 +141,7 @@ export class WatchDriverNavigationPage implements OnInit {
       let latlng = new google.maps.LatLng(test_lat, test_lng);
       let driver_location = new google.maps.LatLng(test_lat, test_lng);
 
-      this.calculateAndDisplayRoute(driver_location);
+      //this.calculateAndDisplayRoute(driver_location);
 
       if (this.markersArray.length >= 1) {
         console.log("----ARRAY > 1----");

@@ -24,6 +24,8 @@ import {
 // import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Diagnostic } from "@ionic-native/diagnostic/ngx";
 import { LocationService } from "./location.service";
+import { AuthService } from "../auth/auth.service";
+import { DriverRegService } from "../driver-registration/driver-reg.service";
 
 // import { Platform } from 'ionic-angular';
 
@@ -88,6 +90,7 @@ export class HomePage implements OnInit, AfterViewInit {
   lat: any;
   lng: any;
   watchId: any;
+  userId: string;
 
   constructor(
     private renderer: Renderer2,
@@ -100,7 +103,9 @@ export class HomePage implements OnInit, AfterViewInit {
     // private geolocation: Geolocation,
     private diagnostic: Diagnostic,
     private locationService: LocationService,
-    public ngZone: NgZone
+    public ngZone: NgZone,
+    private authService: AuthService,
+    private driverSvr: DriverRegService
   ) {
     this.geocoder = new google.maps.Geocoder();
     let elem = document.createElement("div");
@@ -131,6 +136,24 @@ export class HomePage implements OnInit, AfterViewInit {
 
     this.platform.resume.subscribe(async () => {
       this.getCurrentPosition();
+    });
+
+    this.authService.userId.subscribe((userId) => {
+      if (!userId) {
+        throw new Error("User not found!");
+      }
+      this.userId = userId;
+      console.log("USER ID IS::: ", this.userId);
+    });
+
+    this.driverSvr.getDriverById(this.userId).subscribe((drivers) => {
+      console.log("DRIVER DETAILS:::", drivers);
+      console.log("DRIVER DETAILS UID:::", drivers[0].uid);
+      if (drivers[0].uid == this.userId) {
+        console.log("USER IS A DRIVER");
+      } else {
+        console.log("NOT DRIVER");
+      }
     });
   }
 

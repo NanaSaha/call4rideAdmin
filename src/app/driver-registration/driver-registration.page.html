@@ -1,42 +1,59 @@
 <ion-header>
-    <ion-toolbar class="titleBg">
-        <ion-buttons slot="start">
-            <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-        <ion-title>Driver Registration</ion-title>
-    </ion-toolbar>
+  <ion-toolbar class="titleBg">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Driver Registration</ion-title>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-text-center">
-    <h1 style="padding-top: 15px;">Your Car Registration</h1>
-    <!-- <ion-img [src]="selectedImage"></ion-img> -->
+  <h1 style="padding-top: 15px">Your Car Registration</h1>
+  <!-- <ion-img [src]="selectedImage"></ion-img> -->
+  <ion-item>
+    <ion-card>
+      <ion-img class="homecardimage" [src]="selectedImage"></ion-img>
+    </ion-card>
+  </ion-item>
+  <form [formGroup]="driverForm" (ngSubmit)="onSubmitForm()">
     <ion-item>
-        <ion-card>
-            <ion-img class='homecardimage' [src]="selectedImage"></ion-img>
-        </ion-card>
+      <ion-label class="lb">Driver Name: </ion-label>
+      <ion-input type="text" formControlName="driverName"></ion-input>
     </ion-item>
-    <form [formGroup]="driverForm" (ngSubmit)="onSubmitForm()">
-        <ion-item>
-            <ion-label class="lb">Driver Name: </ion-label>
-            <ion-input type="text" formControlName="driverName"></ion-input>
-        </ion-item>
-        <ion-item>
-            <ion-label class="lb">Car Year:</ion-label>
-            <ion-datetime formControlName="carYear" displayFormat="YYYY" min="1981" max="2002"></ion-datetime>
-        </ion-item>
-        <ion-item>
-            <ion-label class="lb">Car Type:</ion-label>
-            <ion-textarea formControlName="carType"></ion-textarea>
-        </ion-item>
-        <ion-item>
-            <app-image-picker [showPreview]="driverForm.get('image').value" (imagePick)="onImagePicked($event)"></app-image-picker>
-        </ion-item>
-        <ion-item>
-            <ion-label class="lb">Licences Plate:</ion-label>
-            <ion-textarea formControlName="licencesPlate"></ion-textarea>
-        </ion-item>
-        <ion-label expand="block" stacked *ngIf="isRegistered" class="ion-text-wrap">Youhave been registered as a driver</ion-label>
-        <ion-button expand="full" *ngIf="!isRegistered" size="large" ion-button type="submit" [disabled]="!driverForm.valid">Submit</ion-button>
-    </form>
-
+    <ion-item>
+      <ion-label class="lb">Car Year:</ion-label>
+      <ion-datetime
+        formControlName="carYear"
+        displayFormat="YYYY"
+        min="1981"
+        max="2002"
+      ></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-label class="lb">Car Type:</ion-label>
+      <ion-textarea formControlName="carType"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <app-image-picker
+        [showPreview]="driverForm.get('image').value"
+        (imagePick)="onImagePicked($event)"
+      ></app-image-picker>
+    </ion-item>
+    <ion-item>
+      <ion-label class="lb">Licences Plate:</ion-label>
+      <ion-textarea formControlName="licencesPlate"></ion-textarea>
+    </ion-item>
+    <ion-label expand="block" stacked *ngIf="isRegistered" class="ion-text-wrap"
+      >You have been registered as a driver</ion-label
+    >
+    <ion-button
+      expand="full"
+      *ngIf="!isRegistered"
+      size="large"
+      ion-button
+      type="submit"
+      [disabled]="!driverForm.valid"
+      >Submit</ion-button
+    >
+  </form>
 </ion-content>
