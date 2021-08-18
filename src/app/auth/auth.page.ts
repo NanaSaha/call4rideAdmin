@@ -7,6 +7,7 @@ import { Plugins } from "@capacitor/core";
 
 import { AuthService, AuthResponseData } from "../auth/auth.service";
 import { DeviceService } from "../services/device.service";
+import { DriverRegService } from "../driver-registration/driver-reg.service";
 
 const { Device } = Plugins;
 
@@ -24,7 +25,8 @@ export class AuthPage implements OnInit {
     private router: Router,
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController,
-    private _DeviceService:DeviceService,
+    private _DeviceService: DeviceService,
+    private driverSvr: DriverRegService
   ) {}
 
   ngOnInit() {}
@@ -44,9 +46,27 @@ export class AuthPage implements OnInit {
             console.log(resData);
             this.isLoading = false;
             loadingEl.dismiss();
+            if (resData.localId) {
+              this.driverSvr
+                .getDriverById(resData.localId)
+                .subscribe((drivers) => {
+                  console.log("DRIVER DETAILS AUTH PAGE:::", drivers);
+                  console.log("DRIVER DETAILS UID:::", drivers[0].uid);
+                  console.log("USER ID:::", resData.localId);
+                  if (drivers[0].uid == resData.localId) {
+                    console.log("USER IS A DRIVER");
+                    this.router.navigateByUrl("/driver-job");
+                  } else {
+                    console.log("NOT DRIVER");
+                    //this.deviceCheck(info.uuid);
+                  }
+                });
+            } else {
+              console.log("USERDATAS ID NOT READY YET:::", resData.localId);
+            }
             //this.router.navigateByUrl("/home");
-           //alert("Your platform is: " + info.uuid)
-            this.deviceCheck(info.uuid);
+            //alert("Your platform is: " + info.uuid)
+            //this.deviceCheck(info.uuid);
           },
           (errRes) => {
             loadingEl.dismiss();
@@ -66,26 +86,32 @@ export class AuthPage implements OnInit {
   }
 
   private deviceCheck(uuid: any) {
-
-    Plugins.Storage.get({ key: "device_id"}).then((uuid)=>{
-      if (uuid !== null && uuid !== undefined) {
-        this._DeviceService.iSDeviceRegistered(uuid.value).subscribe((device) => {
-          // alert(device);
-          if (device !== null && device !== undefined && device.length > 0) {
-            this.router.navigateByUrl("/home");
-          }
-          else {
-            this.router.navigateByUrl("/phone-signin");
-          }
-        });
-      }
-      else {
-        this.router.navigateByUrl("/phone-signin");
-      }
-    },err=>{
-      console.log(err);
-    })
- 
+    console.log("RUUNIN CHECK DEVICE");
+    // Plugins.Storage.get({ key: "device_id" }).then(
+    //   (uuid) => {
+    //     if (uuid !== null && uuid !== undefined) {
+    //       this._DeviceService
+    //         .iSDeviceRegistered(uuid.value)
+    //         .subscribe((device) => {
+    //           // alert(device);
+    //           if (
+    //             device !== null &&
+    //             device !== undefined &&
+    //             device.length > 0
+    //           ) {
+    //             this.router.navigateByUrl("/home");
+    //           } else {
+    //             this.router.navigateByUrl("/phone-signin");
+    //           }
+    //         });
+    //     } else {
+    //       this.router.navigateByUrl("/phone-signin");
+    //     }
+    //   },
+    //   (err) => {
+    //     console.log(err);
+    //   }
+    // );
   }
   // private deviceCheck(uuid: any) {
   //   if (uuid !== null && uuid !== undefined) {

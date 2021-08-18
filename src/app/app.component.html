@@ -42,6 +42,7 @@
             routerLink="/driver-registration"
             routerLinkActive="active-link"
             class="link"
+            *ngIf="!isDriver"
           >
             Become A Driver
           </ion-button>
@@ -65,37 +66,37 @@
               <ion-label>Settings</ion-label>
             </ion-item>
           </ion-menu-toggle>
-          <ion-menu-toggle>
+          <ion-menu-toggle *ngIf="!isDriver">
             <ion-item lines="none" routerLink="/home">
               <ion-icon name="compass-outline" slot="start"></ion-icon>
               <ion-label>Book a trip</ion-label>
             </ion-item>
           </ion-menu-toggle>
-          <ion-menu-toggle>
+          <ion-menu-toggle *ngIf="!isDriver">
             <ion-item lines="none" routerLink="/bookings">
               <ion-icon name="checkbox-outline" slot="start"></ion-icon>
               <ion-label>Tripe History</ion-label>
             </ion-item>
           </ion-menu-toggle>
-          <ion-menu-toggle>
+          <ion-menu-toggle *ngIf="!isDriver">
             <ion-item lines="none" routerLink="/driver">
               <ion-icon name="checkbox-outline" slot="start"></ion-icon>
               <ion-label>Track My Ride</ion-label>
             </ion-item>
           </ion-menu-toggle>
-          <ion-menu-toggle *ngIf="adminMenuAllowed">
+          <ion-menu-toggle *ngIf="adminMenuAllowed && !isDriver">
             <ion-item lines="none" routerLink="/ride-requests">
               <ion-icon name="checkbox-outline" slot="start"></ion-icon>
               <ion-label>Requests</ion-label>
             </ion-item>
           </ion-menu-toggle>
-          <ion-menu-toggle *ngIf="adminMenuAllowed">
+          <ion-menu-toggle *ngIf="adminMenuAllowed && !isDriver">
             <ion-item lines="none" routerLink="/user">
               <ion-icon name="checkbox-outline" slot="start"></ion-icon>
               <ion-label>Users</ion-label>
             </ion-item>
           </ion-menu-toggle>
-          <ion-menu-toggle *ngIf="adminMenuAllowed">
+          <ion-menu-toggle *ngIf="adminMenuAllowed && !isDriver">
             <ion-item lines="none" routerLink="/drver-registration">
               <ion-icon name="checkbox-outline" slot="start"></ion-icon>
               <ion-label>Driver Registration </ion-label>

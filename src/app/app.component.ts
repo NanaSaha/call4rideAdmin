@@ -51,6 +51,7 @@ export class AppComponent implements OnInit, OnDestroy {
   message;
   isDesktop;
   adminMenuAllowed: boolean;
+  isDriver: boolean = false;
   UniqueDeviceID: string;
   userId: string;
 
@@ -182,7 +183,28 @@ export class AppComponent implements OnInit, OnDestroy {
   private authenticateUser() {
     this.authSub = this.authService.userIsAuthenticated.subscribe((isAuth) => {
       if (isAuth) {
-        this.deviceCheck();
+        this.userService.getUserByUserId().subscribe((userdatas) => {
+          if (userdatas.length > 0) {
+            let userdata = userdatas[0];
+
+            if (userdata.userId) {
+              this.driverSvr
+                .getDriverById(userdata.userId)
+                .subscribe((drivers) => {
+                  if (drivers[0].uid == userdata.userId) {
+                    console.log("USER IS A DRIVER");
+                    this.router.navigateByUrl("/driver-job");
+                  } else {
+                    this.deviceCheck();
+                  }
+                });
+            } else {
+              this.deviceCheck();
+              console.log("USERDATAS ID NOT READY YET:::", userdata.userId);
+            }
+          }
+        });
+        //this.deviceCheck();
       } else {
         this.router.navigateByUrl("/auth");
       }
@@ -232,6 +254,9 @@ export class AppComponent implements OnInit, OnDestroy {
             console.log("USER ID:::", userdata.userId);
             if (drivers[0].uid == userdata.userId) {
               console.log("USER IS A DRIVER");
+
+              this.isDriver = true;
+              console.log("this.isDriver", this.isDriver);
             } else {
               console.log("NOT DRIVER");
             }
