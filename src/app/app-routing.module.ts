@@ -111,7 +111,11 @@ const routes: Routes = [
       import("./watch-driver-navigation/watch-driver-navigation.module").then(
         (m) => m.WatchDriverNavigationPageModule
       ),
+  },  {
+    path: 'driver-dashboard',
+    loadChildren: () => import('./driver-dashboard/driver-dashboard.module').then( m => m.DriverDashboardPageModule)
   },
+
 ];
 
 @NgModule({

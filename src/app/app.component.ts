@@ -193,7 +193,8 @@ export class AppComponent implements OnInit, OnDestroy {
                 .subscribe((drivers) => {
                   if (drivers[0].uid == userdata.userId) {
                     console.log("USER IS A DRIVER");
-                    this.router.navigateByUrl("/driver-job");
+                    // this.router.navigateByUrl("/driver-job");
+                    this.router.navigateByUrl("/driver-dashboard");
                   } else {
                     this.deviceCheck();
                   }

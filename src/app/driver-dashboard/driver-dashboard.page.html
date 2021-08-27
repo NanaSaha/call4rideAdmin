@@ -1,0 +1,61 @@
+<ion-header>
+  <ion-toolbar class="titleBg">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Dashboard</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item *ngIf="this.goOn">
+    <ion-label>Go Offline</ion-label>
+
+    <ion-toggle
+      [(ngModel)]="online"
+      [checked]="online"
+      (ionChange)="onToggleBtnChange($event)"
+    >
+    </ion-toggle>
+  </ion-item>
+
+  <ion-item *ngIf="!this.goOn">
+    <ion-label>Go Online</ion-label>
+
+    <ion-toggle
+      [(ngModel)]="online"
+      [checked]="online"
+      (ionChange)="onToggleBtnChange($event)"
+    >
+    </ion-toggle>
+  </ion-item>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-card>
+          <ion-item>
+            <ion-icon name="car" slot="start"></ion-icon>
+            <ion-label>Number Of Rides</ion-label>
+          </ion-item>
+
+          <ion-card-content>
+            <ion-button fill="outline" slot="end">View</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col>
+        <ion-card>
+          <ion-item>
+            <ion-icon name="book" slot="start"></ion-icon>
+            <ion-label>Documents</ion-label>
+          </ion-item>
+
+          <ion-card-content>
+            <ion-button fill="outline" slot="end">View</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

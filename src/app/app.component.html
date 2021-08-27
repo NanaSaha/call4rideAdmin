@@ -46,27 +46,14 @@
           >
             Become A Driver
           </ion-button>
-          <ion-menu-toggle>
-            <ion-item lines="none" routerLink="/driver-navigation">
-              <ion-icon name="locate" slot="start"></ion-icon>
-              <ion-label>Driver Navigation</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
 
-          <ion-menu-toggle>
-            <ion-item lines="none" routerLink="/watch-driver-navigation">
-              <ion-icon name="locate" slot="start"></ion-icon>
-              <ion-label>Watch Driver Navigation</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-
-          <ion-menu-toggle>
+          <ion-menu-toggle *ngIf="!isDriver">
             <ion-item lines="none" routerLink="/settings">
               <ion-icon name="settings-outline" slot="start"></ion-icon>
               <ion-label>Settings</ion-label>
             </ion-item>
           </ion-menu-toggle>
-          <ion-menu-toggle *ngIf="!isDriver">
+          <ion-menu-toggle>
             <ion-item lines="none" routerLink="/home">
               <ion-icon name="compass-outline" slot="start"></ion-icon>
               <ion-label>Book a trip</ion-label>
@@ -84,7 +71,8 @@
               <ion-label>Track My Ride</ion-label>
             </ion-item>
           </ion-menu-toggle>
-          <ion-menu-toggle *ngIf="adminMenuAllowed && !isDriver">
+          <!-- <ion-menu-toggle *ngIf="adminMenuAllowed && !isDriver"> -->
+          <ion-menu-toggle *ngIf="adminMenuAllowed">
             <ion-item lines="none" routerLink="/ride-requests">
               <ion-icon name="checkbox-outline" slot="start"></ion-icon>
               <ion-label>Requests</ion-label>
@@ -100,6 +88,25 @@
             <ion-item lines="none" routerLink="/drver-registration">
               <ion-icon name="checkbox-outline" slot="start"></ion-icon>
               <ion-label>Driver Registration </ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+          <ion-menu-toggle *ngIf="isDriver">
+            <ion-item lines="none" routerLink="/driver-dashboard">
+              <ion-icon name="checkbox-outline" slot="start"></ion-icon>
+              <ion-label>Dashboard</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+          <ion-menu-toggle *ngIf="isDriver">
+            <ion-item lines="none" routerLink="/driver-navigation">
+              <ion-icon name="locate" slot="start"></ion-icon>
+              <ion-label>Driver Navigation</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+
+          <ion-menu-toggle *ngIf="isDriver">
+            <ion-item lines="none" routerLink="/watch-driver-navigation">
+              <ion-icon name="locate" slot="start"></ion-icon>
+              <ion-label>Watch Driver Navigation</ion-label>
             </ion-item>
           </ion-menu-toggle>
           <ion-menu-toggle>

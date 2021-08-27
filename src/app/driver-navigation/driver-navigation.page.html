@@ -6,16 +6,16 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-menu-button>Navigate</ion-menu-button>
     </ion-buttons>
-    <ion-searchbar
+    <!-- <ion-searchbar
       [(ngModel)]="autocomplete.input"
       (ionInput)="UpdateSearchResults()"
       placeholder="Enter your Destination"
       (ionClear)="ClearAutocomplete()"
-    ></ion-searchbar>
+    ></ion-searchbar> -->
   </ion-toolbar>
-  <ion-list [hidden]="autocompleteItems.length == 0">
+  <!-- <ion-list [hidden]="autocompleteItems.length == 0">
     <ion-item
       *ngFor="let item of autocompleteItems"
       tappable
@@ -23,7 +23,7 @@
     >
       {{ item.description }}
     </ion-item>
-  </ion-list>
+  </ion-list> -->
 </ion-header>
 
 <ion-content>
@@ -85,7 +85,7 @@
   <div #map id="map"></div>
 
   <div class="buttonOnMap">
-    <ion-button
+    <!-- <ion-button
       color="dark"
       expand="block"
       (click)="calculateAndDisplayRoute(startAddress)"
@@ -93,7 +93,7 @@
     >
       <ion-icon name="locate" slot="start"></ion-icon>
       Show Pickup Location Route
-    </ion-button>
+    </ion-button> -->
 
     <ion-button
       color="warning"
@@ -113,7 +113,7 @@
     >
       <ion-icon name="hand-right-outline" slot="start"></ion-icon>
 
-      Stop Navigating .......
+      Arrived
     </ion-button>
   </div>
 
