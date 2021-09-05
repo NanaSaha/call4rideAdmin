@@ -1,21 +1,25 @@
-<!-- <ion-header>
-  <ion-toolbar>
+<ion-header>
+  <ion-toolbar class="titleBg">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
     <ion-title>Driver Navigation</ion-title>
   </ion-toolbar>
-</ion-header> -->
-<ion-header>
+</ion-header>
+<!-- <ion-header>
   <ion-toolbar color="primary">
+    <ion-title>Driver Navigation</ion-title>
     <ion-buttons slot="start">
       <ion-menu-button>Navigate</ion-menu-button>
-    </ion-buttons>
-    <!-- <ion-searchbar
+    </ion-buttons> -->
+<!-- <ion-searchbar
       [(ngModel)]="autocomplete.input"
       (ionInput)="UpdateSearchResults()"
       placeholder="Enter your Destination"
       (ionClear)="ClearAutocomplete()"
     ></ion-searchbar> -->
-  </ion-toolbar>
-  <!-- <ion-list [hidden]="autocompleteItems.length == 0">
+<!-- </ion-toolbar> -->
+<!-- <ion-list [hidden]="autocompleteItems.length == 0">
     <ion-item
       *ngFor="let item of autocompleteItems"
       tappable
@@ -24,7 +28,7 @@
       {{ item.description }}
     </ion-item>
   </ion-list> -->
-</ion-header>
+<!-- </ion-header> -->
 
 <ion-content>
   <!-- <ion-list>
@@ -96,6 +100,16 @@
     </ion-button> -->
 
     <ion-button
+      color="dark"
+      expand="block"
+      (click)="openMap()"
+      *ngIf="!isTracking"
+    >
+      <ion-icon name="locate" slot="start"></ion-icon>
+      Navigate With Directions
+    </ion-button>
+
+    <ion-button
       color="warning"
       expand="block"
       (click)="startTracking()"
@@ -113,7 +127,7 @@
     >
       <ion-icon name="hand-right-outline" slot="start"></ion-icon>
 
-      Arrived
+      Stop Navigating
     </ion-button>
   </div>
 

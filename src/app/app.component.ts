@@ -191,12 +191,14 @@ export class AppComponent implements OnInit, OnDestroy {
               this.driverSvr
                 .getDriverById(userdata.userId)
                 .subscribe((drivers) => {
-                  if (drivers[0].uid == userdata.userId) {
-                    console.log("USER IS A DRIVER");
-                    // this.router.navigateByUrl("/driver-job");
-                    this.router.navigateByUrl("/driver-dashboard");
-                  } else {
-                    this.deviceCheck();
+                  if (drivers.length > 0) {
+                    if (drivers[0].uid == userdata.userId) {
+                      console.log("USER IS A DRIVER");
+                      // this.router.navigateByUrl("/driver-job");
+                      this.router.navigateByUrl("/driver-dashboard");
+                    } else {
+                      this.deviceCheck();
+                    }
                   }
                 });
             } else {
@@ -251,15 +253,19 @@ export class AppComponent implements OnInit, OnDestroy {
         if (userdata.userId) {
           this.driverSvr.getDriverById(userdata.userId).subscribe((drivers) => {
             console.log("DRIVER DETAILS:::", drivers);
-            console.log("DRIVER DETAILS UID:::", drivers[0].uid);
-            console.log("USER ID:::", userdata.userId);
-            if (drivers[0].uid == userdata.userId) {
-              console.log("USER IS A DRIVER");
+            if (drivers.length > 0) {
+              console.log("DRIVER DETAILS UID:::", drivers[0].uid);
+              console.log("USER ID:::", userdata.userId);
+              if (drivers[0].uid == userdata.userId) {
+                console.log("USER IS A DRIVER");
 
-              this.isDriver = true;
-              console.log("this.isDriver", this.isDriver);
+                this.isDriver = true;
+                console.log("this.isDriver", this.isDriver);
+              } else {
+                console.log("NOT DRIVER");
+              }
             } else {
-              console.log("NOT DRIVER");
+              console.log("DRIVER DETAILS NOT AVAILABLE");
             }
           });
         } else {

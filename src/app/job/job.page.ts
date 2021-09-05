@@ -98,7 +98,7 @@ export class JobPage implements OnInit {
     driverJob.firstName = this.job.user.firstName;
     driverJob.lastName = this.job.user.lastName;
     driverJob.phoneNumber = this.job.user.phone;
-
+    driverJob.riderID = this.job.user.userId;
     console.log("DRIVER DETAILS ", driverJob);
     console.log("this.SelectedDriver.id ", this.SelectedDriver.id);
 
@@ -139,6 +139,20 @@ export class JobPage implements OnInit {
         console.log(err);
       }
     );
+
+    //Save DRIVER TO USER PROFILE
+    this.driverSvr
+      .assignDriverToUser(this.job.user.userId, this.SelectedDriver.uid)
+      .then(
+        (res) => {
+          console.log("DRIVER ASSIGNED TO USER");
+          console.log(res);
+        },
+        (err) => {
+          this.isAssigned = false;
+          console.log(err);
+        }
+      );
 
     // this.driverSvr.getDriverById(this.user.userId).subscribe((drivers)=>{
     //   let driverJob:any = {};

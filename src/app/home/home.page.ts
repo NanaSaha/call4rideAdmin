@@ -148,11 +148,13 @@ export class HomePage implements OnInit, AfterViewInit {
 
     this.driverSvr.getDriverById(this.userId).subscribe((drivers) => {
       console.log("DRIVER DETAILS:::", drivers);
-      console.log("DRIVER DETAILS UID:::", drivers[0].uid);
-      if (drivers[0].uid == this.userId) {
-        console.log("USER IS A DRIVER");
-      } else {
-        console.log("NOT DRIVER");
+      if (drivers.length > 0) {
+        console.log("DRIVER DETAILS UID:::", drivers[0].uid);
+        if (drivers[0].uid == this.userId) {
+          console.log("USER IS A DRIVER");
+        } else {
+          console.log("NOT DRIVER");
+        }
       }
     });
   }

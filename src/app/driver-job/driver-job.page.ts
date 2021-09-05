@@ -78,7 +78,7 @@ export class DriverJobPage implements OnInit {
             this.driverJobs = [];
             this.driverSvr.getDriverJobDocId(this.driver.id).subscribe(
               (driverJobs) => {
-                console.log("DRIVER JOBS:::", this.driverJobs);
+                console.log("DRIVER JOBS:::", driverJobs);
                 this.driverJobs = driverJobs.map(
                   (item) =>
                     (item = {
@@ -235,6 +235,7 @@ export class DriverJobPage implements OnInit {
   }
 
   toggleSelection(index) {
+    console.log("DRIVER JOB HERE INTOGGLE", this.driverJobs);
     this.driverJobs[index].open = !this.driverJobs[index].open;
     if (this.automaticClose && this.driverJobs[index].open) {
       this.driverJobs
@@ -348,7 +349,7 @@ export class DriverJobPage implements OnInit {
           this.distance = response.routes[0].legs[0].distance.text;
           console.log("THE DISTANCE::", this.distance);
           console.log("THE DISTANCE INDEX::", this.driverJobs[index]);
-          this.driverJobs[index].distance = this.distance;
+          // this.driverJobs[index].distance = this.distance;
           if (
             that.distance.split(" ")[0] !== undefined &&
             that.distance.split(" ")[0] !== null

@@ -51,14 +51,19 @@ export class AuthPage implements OnInit {
                 .getDriverById(resData.localId)
                 .subscribe((drivers) => {
                   console.log("DRIVER DETAILS AUTH PAGE:::", drivers);
-                  console.log("DRIVER DETAILS UID:::", drivers[0].uid);
-                  console.log("USER ID:::", resData.localId);
-                  if (drivers[0].uid == resData.localId) {
-                    console.log("USER IS A DRIVER");
-                    this.router.navigateByUrl("/driver-job");
+                  if (drivers.length > 0) {
+                    console.log("DRIVER DETAILS UID:::", drivers[0].uid);
+                    console.log("USER ID:::", resData.localId);
+                    if (drivers[0].uid == resData.localId) {
+                      console.log("USER IS A DRIVER");
+                      this.router.navigateByUrl("/driver-job");
+                    } else {
+                      console.log("NOT DRIVER");
+                      this.deviceCheck(info.uuid);
+                    }
                   } else {
-                    console.log("NOT DRIVER");
-                    //this.deviceCheck(info.uuid);
+                    console.log("DRIVER DETAILS NOT AVAILABLE");
+                    this.deviceCheck(info.uuid);
                   }
                 });
             } else {
@@ -87,31 +92,31 @@ export class AuthPage implements OnInit {
 
   private deviceCheck(uuid: any) {
     console.log("RUUNIN CHECK DEVICE");
-    // Plugins.Storage.get({ key: "device_id" }).then(
-    //   (uuid) => {
-    //     if (uuid !== null && uuid !== undefined) {
-    //       this._DeviceService
-    //         .iSDeviceRegistered(uuid.value)
-    //         .subscribe((device) => {
-    //           // alert(device);
-    //           if (
-    //             device !== null &&
-    //             device !== undefined &&
-    //             device.length > 0
-    //           ) {
-    //             this.router.navigateByUrl("/home");
-    //           } else {
-    //             this.router.navigateByUrl("/phone-signin");
-    //           }
-    //         });
-    //     } else {
-    //       this.router.navigateByUrl("/phone-signin");
-    //     }
-    //   },
-    //   (err) => {
-    //     console.log(err);
-    //   }
-    // );
+    Plugins.Storage.get({ key: "device_id" }).then(
+      (uuid) => {
+        if (uuid !== null && uuid !== undefined) {
+          this._DeviceService
+            .iSDeviceRegistered(uuid.value)
+            .subscribe((device) => {
+              // alert(device);
+              if (
+                device !== null &&
+                device !== undefined &&
+                device.length > 0
+              ) {
+                this.router.navigateByUrl("/home");
+              } else {
+                this.router.navigateByUrl("/phone-signin");
+              }
+            });
+        } else {
+          this.router.navigateByUrl("/phone-signin");
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
   // private deviceCheck(uuid: any) {
   //   if (uuid !== null && uuid !== undefined) {

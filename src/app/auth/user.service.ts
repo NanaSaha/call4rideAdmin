@@ -4,8 +4,8 @@ import { HttpClient } from "@angular/common/http";
 import { map, take, switchMap, tap, first } from "rxjs/operators";
 import { UserRecord } from "./userrecord.model";
 import { AuthService } from "./auth.service";
-import { AngularFirestore } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+import { AngularFirestore } from "@angular/fire/firestore";
+import { Observable } from "rxjs";
 
 interface UserData {
   firstName: string;
@@ -23,62 +23,61 @@ interface UserData {
   providedIn: "root",
 })
 export class UserService {
- 
- 
-  constructor(private authService: AuthService, private http: HttpClient, private db:AngularFirestore) {}
-
+  constructor(
+    private authService: AuthService,
+    private http: HttpClient,
+    private db: AngularFirestore
+  ) {}
 
   getUserByUserId(): Observable<any> {
     let userId = this.getUserId();
-     
-    return this.db
-    .collection('users', ref => ref.where('userId', '==', userId))
-    .snapshotChanges()
-    .pipe(
-      map((snaps) =>snaps.map((snap) => {
-          let data:any = (snap.payload.doc.data() as {});
-          const id = snap.payload.doc.id;
-          data.id = id;
-          return {
-            id: id,
-            ...data
-          };
-        })
-     
-      ),
-      first()
-    );
-  };
 
-  getUserByPhoneNumber(phoneNumber: any): Observable<any>  {
     return this.db
-    .collection('users', ref => ref.where('phone', '==', phoneNumber))
-    .snapshotChanges()
-    .pipe(
-      map((snaps) =>snaps.map((snap) => {
-          let data:any = (snap.payload.doc.data() as {});
-          const id = snap.payload.doc.id;
-          data.id = id;
-          return {
-            id: id,
-            ...data
-          };
-        })
-     
-      ),
-      first()
-    );
+      .collection("users", (ref) => ref.where("userId", "==", userId))
+      .snapshotChanges()
+      .pipe(
+        map((snaps) =>
+          snaps.map((snap) => {
+            let data: any = snap.payload.doc.data() as {};
+            const id = snap.payload.doc.id;
+            data.id = id;
+            return {
+              id: id,
+              ...data,
+            };
+          })
+        ),
+        first()
+      );
   }
 
-  getUserId() 
-  {
-    let userId:string;
-    this.authService.userId.subscribe(userid =>{
-      if(userid !== null && userid !== undefined )
-      {
+  getUserByPhoneNumber(phoneNumber: any): Observable<any> {
+    return this.db
+      .collection("users", (ref) => ref.where("phone", "==", phoneNumber))
+      .snapshotChanges()
+      .pipe(
+        map((snaps) =>
+          snaps.map((snap) => {
+            let data: any = snap.payload.doc.data() as {};
+            const id = snap.payload.doc.id;
+            data.id = id;
+            return {
+              id: id,
+              ...data,
+            };
+          })
+        ),
+        first()
+      );
+  }
+
+  getUserId() {
+    let userId: string;
+    this.authService.userId.subscribe((userid) => {
+      if (userid !== null && userid !== undefined) {
         userId = userid;
       }
-    })
+    });
 
     return userId;
     // return this.authService.userId.pipe(
@@ -179,7 +178,7 @@ export class UserService {
     entryDate: Date,
     localId: string,
     location: PlaceLocation,
-    roles:any
+    roles: any
   ) {
     let newUser: UserRecord;
     if (!localId) {
@@ -200,11 +199,15 @@ export class UserService {
       roles
     );
 
-    return new Promise<any>((resolve, reject) =>{
+    return new Promise<any>((resolve, reject) => {
       this.db
-      .collection('users').add({...newUser,id: null,})
-          .then(res => resolve(res), err => reject(err));  
-  });
+        .collection("users")
+        .add({ ...newUser, id: null })
+        .then(
+          (res) => resolve(res),
+          (err) => reject(err)
+        );
+    });
     // return this.http
     //   .post<UserRecord>("https://callforride.firebaseio.com/users.json", {
     //     ...newUser,
@@ -217,7 +220,6 @@ export class UserService {
     //   );
   }
 
- 
   updateUser(
     id: string,
     firstName: string,
@@ -244,40 +246,48 @@ export class UserService {
       null,
       roles
     );
-    return new Promise<any>((resolve, reject) =>{
+    return new Promise<any>((resolve, reject) => {
       this.db
-      .collection('users').doc(id).set({...updateUser,id: null,})
-          .then(res => resolve(res), err => reject(err));  
-  });
+        .collection("users")
+        .doc(id)
+        .set({ ...updateUser, id: null })
+        .then(
+          (res) => resolve(res),
+          (err) => reject(err)
+        );
+    });
     // return this.http.put<UserRecord>(
     //   `https://callforride.firebaseio.com/users/${id}.json`,
     //   { ...updateUser, id: null }
     // );
   }
 
-  updateUserRole(userItem)
-  {
-    return new Promise<any>((resolve, reject) =>{
+  updateUserRole(userItem) {
+    return new Promise<any>((resolve, reject) => {
       this.db
-      .collection('users').doc(userItem.id).set({...userItem,id: null,})
-          .then(res => resolve(res), err => reject(err));  
-  });
+        .collection("users")
+        .doc(userItem.id)
+        .set({ ...userItem, id: null })
+        .then(
+          (res) => resolve(res),
+          (err) => reject(err)
+        );
+    });
   }
 
   usersCollectionFetch(): Observable<any[]> {
     return this.db
-      .collection("users", ref => 
-      ref.orderBy('entryDate','desc'))
+      .collection("users", (ref) => ref.orderBy("entryDate", "desc"))
       .snapshotChanges()
       .pipe(
         map((snaps) =>
           snaps.map((snap) => {
-            let data:any = (snap.payload.doc.data() as {});
+            let data: any = snap.payload.doc.data() as {};
             const id = snap.payload.doc.id;
             data.id = id;
-                      return {
+            return {
               id: id,
-              ... data
+              ...data,
             };
           })
         ),

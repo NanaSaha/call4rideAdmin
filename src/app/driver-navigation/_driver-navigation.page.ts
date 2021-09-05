@@ -16,15 +16,9 @@ import {
 import { map } from "rxjs/operators";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 const { Geolocation } = Plugins;
-import {
-  NativeGeocoder,
-  NativeGeocoderResult,
-  NativeGeocoderOptions,
-} from "@ionic-native/native-geocoder/ngx";
 // import * as SlidingMarker from "marker-animate-unobtrusive";
 import * as SlidingMarker from "../../../node_modules/marker-animate-unobtrusive";
 import { AuthService } from "../auth/auth.service";
-import { Platform } from "@ionic/angular";
 
 @Component({
   selector: "app-driver-navigation",
@@ -57,7 +51,6 @@ export class DriverNavigationPage implements OnInit {
   carMarker;
   current_location: any;
   directionForm: FormGroup;
-  geocoder: any;
 
   autocomplete: { input: string };
   autocompleteItems: any[];
@@ -67,8 +60,6 @@ export class DriverNavigationPage implements OnInit {
   rider_details;
   endAddress: any;
   startAddress: any;
-  lat;
-  lng;
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -77,10 +68,19 @@ export class DriverNavigationPage implements OnInit {
     private authService: AuthService,
     public zone: NgZone,
     private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private nativeGeocoder: NativeGeocoder,
-    private platform: Platform
-  ) {}
+    private router: Router
+  ) {
+    this.loadMap();
+    //AUTOCOMPLETE THINGS
+    // this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
+    // this.autocomplete = { input: "" };
+    // this.autocompleteItems = [];
+
+    // this.directionForm = this.fb.group({
+    //   destination: ["", Validators.required],
+    // });
+  }
+
   ngOnInit() {
     // this.loadMap();
     this.mapData();
@@ -103,8 +103,6 @@ export class DriverNavigationPage implements OnInit {
             this.startAddress = this.rider_details.startAddress;
             console.log("START ADDRESS:::: ", this.startAddress);
             console.log("END ADDRESS:::: ", this.endAddress);
-
-            this.forwardGeocode(this.endAddress);
           }
         }
       },
@@ -114,46 +112,49 @@ export class DriverNavigationPage implements OnInit {
     );
   }
 
-  forwardGeocode(address) {
-    if (this.platform.is("cordova")) {
-      console.log("PLatform is cordova");
-      let options: NativeGeocoderOptions = {
-        useLocale: true,
-        maxResults: 5,
-      };
-      this.nativeGeocoder
-        .forwardGeocode(address, options)
-        .then((result: NativeGeocoderResult[]) => {
-          this.zone.run(() => {
-            this.lat = result[0].latitude;
-            this.lng = result[0].longitude;
-          });
-        })
-        .catch((error: any) => console.log(error));
-      console.log("LAT IS", this.lat + " and" + "LNG IS", this.lng);
-    } else {
-      console.log("PLatform is browser");
-      let geocoder = new google.maps.Geocoder();
-      geocoder.geocode({ address: address }, (results, status) => {
-        if (status == google.maps.GeocoderStatus.OK) {
-          this.zone.run(() => {
-            this.lat = results[0].geometry.location.lat();
-            this.lng = results[0].geometry.location.lng();
-            console.log("results IS", results);
-            console.log("LAT IS", this.lat + " and" + "LNG IS", this.lng);
-          });
-        } else {
-          alert("Error - " + results + " & Status - " + status);
-        }
-      });
-    }
-  }
-
   ionViewWillEnter() {
     this.loadMap();
     this.mapData();
-    this.directionsDisplay.setMap(this.map);
   }
+
+  // loadMap() {
+  //   Geolocation.getCurrentPosition().then(
+  //     (resp) => {
+  //       let lat = resp.coords.latitude;
+  //       let lng = resp.coords.longitude;
+
+  //       this.current_location = new google.maps.LatLng(lat, lng);
+
+  //       let mapOptions = {
+  //         center: this.current_location,
+  //         zoom: 15,
+  //         mapTypeId: google.maps.MapTypeId.ROADMAP,
+  //         disableDefaultUI: true,
+  //         // zoomControl: true,
+  //       };
+
+  //       console.log("ABOUT TO CREAT MAP--->>");
+  //       this.map = new google.maps.Map(
+  //         this.mapElement.nativeElement,
+  //         mapOptions
+  //       );
+
+  //       //PUT MARKER ON MAP
+  //       this.carMarker = new SlidingMarker({
+  //         map: this.map,
+  //         position: this.current_location,
+  //         icon: "/assets/image/person.png",
+  //         duration: 1000,
+  //         easing: "easeOutExpo",
+  //       });
+
+  //       this.firstmarkersArray.push(this.carMarker);
+  //     },
+  //     (err) => {
+  //       console.log("Geolocation err: " + err);
+  //     }
+  //   );
+  // }
 
   loadMap() {
     let latlng = new google.maps.LatLng(51.9036442, 7.6673267);
@@ -166,57 +167,7 @@ export class DriverNavigationPage implements OnInit {
     };
 
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-
-    //PUT MARKER ON MAP
-    this.carMarker = new SlidingMarker({
-      map: this.map,
-      position: latlng,
-      icon: "/assets/image/person.png",
-      duration: 1000,
-      easing: "easeOutExpo",
-    });
-
-    this.firstmarkersArray.push(this.carMarker);
   }
-
-  //   loadMap() {
-  //     Geolocation.getCurrentPosition().then(
-  //       (resp) => {
-  //         let lat = resp.coords.latitude;
-  //         let lng = resp.coords.longitude;
-
-  //         this.current_location = new google.maps.LatLng(lat, lng);
-
-  //         let mapOptions = {
-  //           center: this.current_location,
-  //           zoom: 15,
-  //           mapTypeId: google.maps.MapTypeId.ROADMAP,
-  //           disableDefaultUI: true,
-  //           // zoomControl: true,
-  //         };
-
-  //         console.log("ABOUT TO CREAT MAP--->>");
-  //         this.map = new google.maps.Map(
-  //           this.mapElement.nativeElement,
-  //           mapOptions
-  //         );
-
-  //         //PUT MARKER ON MAP
-  //         this.carMarker = new SlidingMarker({
-  //           map: this.map,
-  //           position: this.current_location,
-  //           icon: "/assets/image/person.png",
-  //           duration: 1000,
-  //           easing: "easeOutExpo",
-  //         });
-
-  //         this.firstmarkersArray.push(this.carMarker);
-  //       },
-  //       (err) => {
-  //         console.log("Geolocation err: " + err);
-  //       }
-  //     );
-  //   }
 
   mapData() {
     this.locationsCollection = this.afs.collection(`Locations`, (ref) =>
@@ -237,35 +188,38 @@ export class DriverNavigationPage implements OnInit {
 
     // Update MAp
 
-    this.locations.subscribe((locations) => {
-      console.log("new Locations updating ", locations);
-      this.updateMap(locations);
+    this.locations.subscribe((location) => {
+      // console.log("new Locations updating ", location[0].lat);
+      this.updateMap(location);
     });
   }
 
   updateMap(locations) {
-    console.log("----INSIDE UPDATE MAP----");
+    console.log("----INSIDE UPDATE MAP----", locations);
     if (locations.length > 0) {
       for (let loc of locations) {
         let latlng = new google.maps.LatLng(loc.lat, loc.lng);
         console.log("MARKERS ARRAY LENTHG", this.markersArray.length);
 
+        console.log("LATLNG", latlng);
+
         if (this.markersArray.length >= 1) {
           console.log("----ARRAY > 1----");
+          console.log("----MAP----", this.map);
           this.firstmarkersArray.map((marker) => marker.setMap(null));
           this.carMarker.setPosition(latlng);
-          this.carMarker.setDuration(5000);
+          this.carMarker.setDuration(2000);
           this.carMarker.setEasing("linear");
           this.map.setCenter(latlng);
         } else if (this.markersArray.length < 1) {
-          console.log("----CREATING NEW MARKER----");
-          this.markersArray.map((marker) => marker.setMap(null));
-          this.markersArray = [];
+          console.log("----CREATING NEW MARKER----", this.map);
+          // this.markersArray.map((marker) => marker.setMap(null));
+          // this.markersArray = [];
           this.carMarker = new SlidingMarker({
             map: this.map,
             position: latlng,
             icon: "/assets/image/car.png",
-            duration: 5000,
+            duration: 2000,
             easing: "easeOutExpo",
           });
           this.markersArray.push(this.carMarker);
@@ -291,28 +245,14 @@ export class DriverNavigationPage implements OnInit {
 
         this.map.setZoom(15);
 
+        // let end = new google.maps.LatLng(
+        //   position.coords.latitude,
+        //   position.coords.longitude
+        // );
+
         this.calculateAndDisplayRoute(this.endAddress);
       }
     });
-  }
-
-  openMap() {
-    this.isTracking = true;
-    this.watch = Geolocation.watchPosition({}, (position, err) => {
-      if (position) {
-        this.addNewLocation(
-          position.coords.latitude,
-          position.coords.longitude,
-          position.timestamp,
-          this.userId
-        );
-      }
-    });
-    console.log("LAT IS", this.lat + " and" + "LNG IS", this.lng);
-    let destination = this.lat + "," + this.lng;
-    window.open(
-      "https://www.google.com/maps/search/?api=1&query=" + destination
-    );
   }
 
   stopTracking() {
@@ -341,6 +281,29 @@ export class DriverNavigationPage implements OnInit {
     this.locationsCollection.doc(pos.id).delete();
   }
 
+  // startNavigating() {
+  //   let directionsService = new google.maps.DirectionsService();
+  //   let directionsDisplay = new google.maps.DirectionsRenderer();
+
+  //   directionsDisplay.setMap(this.map);
+  //   directionsDisplay.setPanel(this.directionsPanel.nativeElement);
+
+  //   directionsService.route(
+  //     {
+  //       origin: "adelaide",
+  //       destination: "adelaide oval",
+  //       travelMode: google.maps.TravelMode["DRIVING"],
+  //     },
+  //     (res, status) => {
+  //       if (status == google.maps.DirectionsStatus.OK) {
+  //         directionsDisplay.setDirections(res);
+  //       } else {
+  //         console.warn(status);
+  //       }
+  //     }
+  //   );
+  // }
+
   calculateAndDisplayRoute(destination) {
     console.log("START::", this.current_location);
     console.log("END:::", destination);
@@ -348,7 +311,7 @@ export class DriverNavigationPage implements OnInit {
 
     this.directionsService.route(
       {
-        origin: new google.maps.LatLng(51.9036442, 7.6673267),
+        origin: this.current_location,
         destination: destination,
         travelMode: google.maps.TravelMode["DRIVING"],
       },
@@ -366,7 +329,54 @@ export class DriverNavigationPage implements OnInit {
     // this.map.setZoom(10);
     //preserveViewport: true;
     //this.map.setCenter(this.current_location);
-    // this.autocompleteItems = [];
-    // this.autocomplete.input = "";
+    this.autocompleteItems = [];
+    this.autocomplete.input = "";
   }
+
+  toggle() {
+    this.isNotClicked = false;
+  }
+
+  //AUTOCOMPLETE
+  //AUTOCOMPLETE, SIMPLY LOAD THE PLACE USING GOOGLE PREDICTIONS AND RETURNING THE ARRAY.
+  // UpdateSearchResults() {
+  //   var options = {
+  //     types: ["(cities)"],
+  //     componentRestrictions: { country: "gh" },
+  //   };
+
+  //   console.log("INUT FROM AUTONOCOM", this.autocomplete.input);
+  //   if (this.autocomplete.input == "") {
+  //     this.autocompleteItems = [];
+  //     return;
+  //   }
+  //   this.GoogleAutocomplete.getPlacePredictions(
+  //     { input: this.autocomplete.input, options },
+  //     (predictions, status) => {
+  //       this.autocompleteItems = [];
+  //       this.zone.run(() => {
+  //         predictions.forEach((prediction) => {
+  //           this.autocompleteItems.push(prediction);
+  //         });
+  //       });
+  //     }
+  //   );
+  // }
+
+  //wE CALL THIS FROM EACH ITEM.
+  // SelectSearchResult(item) {
+  //   ///WE CAN CONFIGURE MORE COMPLEX FUNCTIONS SUCH AS UPLOAD DATA TO FIRESTORE OR LINK IT TO SOMETHING
+  //   // alert(JSON.stringify(item));
+  //   this.placeid = item.place_id;
+  //   let destination = item.description;
+  //   console.log("Destinaton Location", destination);
+  //   this.autocompleteItems = [];
+  //   this.autocomplete.input = "";
+  // }
+
+  // //lET'S BE CLEAN! THIS WILL JUST CLEAN THE LIST WHEN WE CLOSE THE SEARCH BAR.
+  // ClearAutocomplete() {
+  //   this.autocompleteItems = [];
+  //   this.autocomplete.input = "";
+  // }
 }
