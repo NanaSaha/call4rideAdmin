@@ -46,32 +46,10 @@ export class AuthPage implements OnInit {
             console.log(resData);
             this.isLoading = false;
             loadingEl.dismiss();
-            if (resData.localId) {
-              this.driverSvr
-                .getDriverById(resData.localId)
-                .subscribe((drivers) => {
-                  console.log("DRIVER DETAILS AUTH PAGE:::", drivers);
-                  if (drivers.length > 0) {
-                    console.log("DRIVER DETAILS UID:::", drivers[0].uid);
-                    console.log("USER ID:::", resData.localId);
-                    if (drivers[0].uid == resData.localId) {
-                      console.log("USER IS A DRIVER");
-                      this.router.navigateByUrl("/driver-job");
-                    } else {
-                      console.log("NOT DRIVER");
-                      this.deviceCheck(info.uuid);
-                    }
-                  } else {
-                    console.log("DRIVER DETAILS NOT AVAILABLE");
-                    this.deviceCheck(info.uuid);
-                  }
-                });
-            } else {
-              console.log("USERDATAS ID NOT READY YET:::", resData.localId);
-            }
+
             //this.router.navigateByUrl("/home");
             //alert("Your platform is: " + info.uuid)
-            //this.deviceCheck(info.uuid);
+            this.deviceCheck(info.uuid);
           },
           (errRes) => {
             loadingEl.dismiss();

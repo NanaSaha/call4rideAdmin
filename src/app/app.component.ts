@@ -97,25 +97,6 @@ export class AppComponent implements OnInit, OnDestroy {
       );
     });
 
-    //CHECK IF USER IS A DRIVER
-    // this.authService.userId.subscribe((userId) => {
-    //   if (!userId) {
-    //     throw new Error("User not found!");
-    //   }
-    //   this.userId = userId;
-    //   console.log("USER ID IS::: ", this.userId);
-    // });
-
-    // this.driverSvr.getDriverById(this.userId).subscribe((drivers) => {
-    //   console.log("DRIVER DETAILS:::", drivers);
-    //   console.log("DRIVER DETAILS UID:::", drivers[0].uid);
-    //   if (drivers[0].uid == this.userId) {
-    //     console.log("USER IS A DRIVER");
-    //   } else {
-    //     console.log("NOT DRIVER");
-    //   }
-    // });
-
     // console.log('Device UUID is: ' + this.device.uuid);
   }
 
@@ -183,31 +164,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private authenticateUser() {
     this.authSub = this.authService.userIsAuthenticated.subscribe((isAuth) => {
       if (isAuth) {
-        this.userService.getUserByUserId().subscribe((userdatas) => {
-          if (userdatas.length > 0) {
-            let userdata = userdatas[0];
-
-            if (userdata.userId) {
-              this.driverSvr
-                .getDriverById(userdata.userId)
-                .subscribe((drivers) => {
-                  if (drivers.length > 0) {
-                    if (drivers[0].uid == userdata.userId) {
-                      console.log("USER IS A DRIVER");
-                      // this.router.navigateByUrl("/driver-job");
-                      this.router.navigateByUrl("/driver-dashboard");
-                    } else {
-                      this.deviceCheck();
-                    }
-                  }
-                });
-            } else {
-              this.deviceCheck();
-              console.log("USERDATAS ID NOT READY YET:::", userdata.userId);
-            }
-          }
-        });
-        //this.deviceCheck();
+        this.deviceCheck();
       } else {
         this.router.navigateByUrl("/auth");
       }

@@ -28,49 +28,34 @@
             </ion-card-content>
           </ion-card>
         </ion-menu-toggle>
-        <!-- <ion-item lines="none" > -->
-        <!-- <ion-icon name="person-circle-outline" slot="start"></ion-icon>
-            <ion-label>Profile</ion-label> -->
-
-        <!-- <ion-label>{{item.text}}</ion-label> -->
-        <!-- </ion-item> -->
 
         <ion-list>
-          <ion-button
-            color="dark"
-            size="small"
-            routerLink="/driver-registration"
-            routerLinkActive="active-link"
-            class="link"
-            *ngIf="!isDriver"
-          >
-            Become A Driver
-          </ion-button>
-
-          <ion-menu-toggle *ngIf="!isDriver">
-            <ion-item lines="none" routerLink="/settings">
-              <ion-icon name="settings-outline" slot="start"></ion-icon>
-              <ion-label>Settings</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
           <ion-menu-toggle>
             <ion-item lines="none" routerLink="/home">
               <ion-icon name="compass-outline" slot="start"></ion-icon>
               <ion-label>Book a trip</ion-label>
             </ion-item>
           </ion-menu-toggle>
-          <ion-menu-toggle *ngIf="!isDriver">
+          <ion-menu-toggle>
             <ion-item lines="none" routerLink="/bookings">
               <ion-icon name="checkbox-outline" slot="start"></ion-icon>
-              <ion-label>Tripe History</ion-label>
+              <ion-label>Trip History</ion-label>
             </ion-item>
           </ion-menu-toggle>
-          <ion-menu-toggle *ngIf="!isDriver">
-            <ion-item lines="none" routerLink="/driver">
+          <ion-menu-toggle>
+            <ion-item lines="none" routerLink="/watch-driver-navigation">
               <ion-icon name="checkbox-outline" slot="start"></ion-icon>
               <ion-label>Track My Ride</ion-label>
             </ion-item>
           </ion-menu-toggle>
+
+          <ion-menu-toggle>
+            <ion-item lines="none" routerLink="/settings">
+              <ion-icon name="settings-outline" slot="start"></ion-icon>
+              <ion-label>Settings</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+
           <!-- <ion-menu-toggle *ngIf="adminMenuAllowed && !isDriver"> -->
           <ion-menu-toggle *ngIf="adminMenuAllowed">
             <ion-item lines="none" routerLink="/ride-requests">
@@ -78,43 +63,13 @@
               <ion-label>Requests</ion-label>
             </ion-item>
           </ion-menu-toggle>
-          <ion-menu-toggle *ngIf="adminMenuAllowed && !isDriver">
+          <ion-menu-toggle *ngIf="adminMenuAllowed">
             <ion-item lines="none" routerLink="/user">
               <ion-icon name="checkbox-outline" slot="start"></ion-icon>
               <ion-label>Users</ion-label>
             </ion-item>
           </ion-menu-toggle>
-          <ion-menu-toggle *ngIf="adminMenuAllowed && !isDriver">
-            <ion-item lines="none" routerLink="/drver-registration">
-              <ion-icon name="checkbox-outline" slot="start"></ion-icon>
-              <ion-label>Driver Registration </ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-          <ion-menu-toggle *ngIf="isDriver">
-            <ion-item lines="none" routerLink="/driver-dashboard">
-              <ion-icon name="checkbox-outline" slot="start"></ion-icon>
-              <ion-label>Dashboard</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-          <ion-menu-toggle>
-            <ion-item lines="none" routerLink="/driver-navigation">
-              <ion-icon name="locate" slot="start"></ion-icon>
-              <ion-label>Driver Navigation</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
 
-          <ion-menu-toggle>
-            <ion-item lines="none" routerLink="/watch-driver-navigation">
-              <ion-icon name="locate" slot="start"></ion-icon>
-              <ion-label>Watch Driver Navigation</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-          <ion-menu-toggle>
-            <ion-item lines="none" routerLink="/driver-job">
-              <ion-icon name="checkbox-outline" slot="start"></ion-icon>
-              <ion-label>My Assigned Jobs</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
           <ion-menu-toggle>
             <ion-item lines="none" (click)="onLogout()" button>
               <ion-icon name="exit" slot="start"></ion-icon>
