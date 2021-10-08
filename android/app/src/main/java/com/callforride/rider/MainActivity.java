@@ -1,4 +1,4 @@
-package com.callforride.taxi;
+package com.callforride.rider;
 
 import android.os.Bundle;
 

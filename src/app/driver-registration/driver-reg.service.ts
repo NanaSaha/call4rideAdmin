@@ -61,25 +61,44 @@ export class DriverRegService {
       );
   }
 
-  // getDriverById(id:any): Observable<any[]> {
-  //   return this.db
-  //     .collection("drivers", ref =>
-  //     ref.orderBy('entryDate','desc'))
-  //     .snapshotChanges()
-  //     .pipe(
-  //       map((snaps) =>
-  //         snaps.map((snap) => {
-  //           let id = snap.payload.doc.id;
-  //           let data:any = (snap.payload.doc.data() as {});
-  //           data.id = id;
-  //          return {
-  //             ...data
-  //             };
-  //         })
-  //       ),
-  //       first()
-  //     );
-  // }
+  updateDriverStatus(statusItem, status) {
+    console.log(
+      "ITEM LIST::" + statusItem,
+      "STATUS" + status,
+      "DRIVER ID" + statusItem.id
+    );
+    return new Promise<any>((resolve, reject) => {
+      this.db
+        .collection("drivers")
+        .doc(statusItem.id)
+        .update({ status: status })
+        .then(
+          (res) => {
+            console.log("RESPONSE FROM STATUS UDATE::" + JSON.stringify(res));
+            resolve(res);
+          },
+          (err) => reject(err)
+        );
+    });
+  }
+
+  deleteDriver(id) {
+    console.log("DRIVER ID " + id);
+    return new Promise<any>((resolve, reject) => {
+      this.db
+        .collection("drivers")
+        .doc(id)
+        .delete()
+        .then(
+          (res) => {
+            console.log("RESPONSE FROM STATUS UDATE::" + JSON.stringify(res));
+            resolve(res);
+          },
+          (err) => reject(err)
+        );
+    });
+  }
+
   getDriverById(userId: any): Observable<any> {
     return this.db
       .collection("drivers", (ref) => ref.where("uid", "==", userId))

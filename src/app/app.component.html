@@ -57,6 +57,7 @@
           </ion-menu-toggle>
 
           <!-- <ion-menu-toggle *ngIf="adminMenuAllowed && !isDriver"> -->
+          <ion-item *ngIf="adminMenuAllowed" no-lines><b>ADMIN</b> </ion-item>
           <ion-menu-toggle *ngIf="adminMenuAllowed">
             <ion-item lines="none" routerLink="/ride-requests">
               <ion-icon name="checkbox-outline" slot="start"></ion-icon>

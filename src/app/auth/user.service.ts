@@ -263,17 +263,38 @@ export class UserService {
   }
 
   updateUserRole(userItem) {
+    console.log("USER ITEM LIST::" + JSON.stringify(userItem));
     return new Promise<any>((resolve, reject) => {
       this.db
         .collection("users")
         .doc(userItem.id)
         .set({ ...userItem, id: null })
         .then(
-          (res) => resolve(res),
+          (res) => {
+            console.log("res::" + JSON.stringify(res));
+            resolve(res);
+          },
           (err) => reject(err)
         );
     });
   }
+
+  //   updateUserRole(userItem) {
+  //   console.log("USER ITEM LIST::" + JSON.stringify(userItem));
+  //   return new Promise<any>((resolve, reject) => {
+  //     this.db
+  //       .collection("users")
+  //       .doc(userItem.id)
+  //       .update({ ...userItem, id: null })
+  //       .then(
+  //         (res) => {
+  //           console.log("res::" + JSON.stringify(res));
+  //           resolve(res);
+  //         },
+  //         (err) => reject(err)
+  //       );
+  //   });
+  // }
 
   usersCollectionFetch(): Observable<any[]> {
     return this.db

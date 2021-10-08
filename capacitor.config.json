@@ -1,5 +1,5 @@
 {
-  "appId": "com.callforride.taxi",
+  "appId": "com.callforride.rider",
   "appName": "callforride",
   "bundledWebRuntime": false,
   "npmClient": "npm",
