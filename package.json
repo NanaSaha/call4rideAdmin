@@ -62,6 +62,7 @@
         "flag-icon-css": "^3.5.0",
         "google-libphonenumber": "^3.2.19",
         "guid-typescript": "^1.0.9",
+        "http-server": "^14.0.0",
         "ion-intl-tel-input": "^1.0.3",
         "ionic-selectable": "^4.8.0",
         "ionic-tel-input": "^1.1.0",
