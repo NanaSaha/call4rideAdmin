@@ -39,6 +39,8 @@ import { Uid } from "@ionic-native/uid/ngx";
 
 import { IonIntlTelInputModule } from "ion-intl-tel-input";
 import { IonicSelectableModule } from "ionic-selectable";
+import { IonicRatingModule } from "ionic4-rating";
+import { OneSignal } from "@ionic-native/onesignal/ngx";
 
 @NgModule({
   declarations: [AppComponent],
@@ -53,6 +55,7 @@ import { IonicSelectableModule } from "ionic-selectable";
     IonicModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,
+    IonicRatingModule,
     ServiceWorkerModule.register("combined-sw.js", {
       enabled: environment.production,
     }),
@@ -65,7 +68,9 @@ import { IonicSelectableModule } from "ionic-selectable";
     IonIntlTelInputModule,
     IonicSelectableModule,
 
-    // ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register("ngsw-worker.js", {
+      enabled: environment.production,
+    }),
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
@@ -80,6 +85,7 @@ import { IonicSelectableModule } from "ionic-selectable";
     AndroidPermissions,
     UniqueDeviceID,
     Uid,
+    OneSignal,
   ],
   bootstrap: [AppComponent],
 })

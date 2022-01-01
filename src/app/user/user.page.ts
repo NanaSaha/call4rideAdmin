@@ -19,8 +19,10 @@ export class UserPage implements OnInit {
   automaticClose: boolean = true;
   roleModel: string;
   selectedIndex: any;
+  driver_selectedIndex: any;
   drivers: any;
   driver_list: any;
+  overall_list: string = "users";
 
   constructor(
     private userService: UserService,
@@ -112,7 +114,8 @@ export class UserPage implements OnInit {
   }
 
   toggleSelectionDrivers(index) {
-    this.selectedIndex = index;
+    this.driver_selectedIndex = index;
+    console.log("SELECTED INDEX:: " + this.driver_selectedIndex);
     this.drivers[index].open = !this.drivers[index].open;
     if (this.drivers[index].open) {
       this.drivers
@@ -125,6 +128,7 @@ export class UserPage implements OnInit {
     console.log(event.detail.value);
     //console.log(this.roleModel);
     console.log(item);
+
     let role: string;
     if (event.detail.value === "admin") {
       role = "admin";
@@ -154,11 +158,13 @@ export class UserPage implements OnInit {
       });
   }
 
-  onSelectChangeDriver(event, item) {
+  onSelectChangeDriver(event, item, index) {
     console.log(event.detail.value);
     console.log(item);
+    this.driver_selectedIndex = index;
+    console.log("SELECTED INDEX:: " + this.driver_selectedIndex);
     let status: string;
-    if (event.detail.value === "verify") {
+    if (event.detail.value === "verified") {
       status = "verified";
       console.log("STATUS SELECT::" + status);
       // item.roles.admin = true;
@@ -173,11 +179,25 @@ export class UserPage implements OnInit {
       })
       .then((loadingEl) => {
         loadingEl.present();
+        console.log("ITEM & STATUS:: " + item, status);
         this.driverSvr.updateDriverStatus(item, status).then(
           (res) => {
             console.log(JSON.stringify(res));
-            console.log("drivers DATA INDEX", this.drivers[this.selectedIndex]);
-            this.drivers[this.selectedIndex].status = status;
+            console.log("DRIVERS LIST:: " + this.drivers);
+            console.log("SELECTED INDEX:: " + this.driver_selectedIndex);
+            console.log(
+              "drivers DATA INDEX",
+              this.drivers[this.driver_selectedIndex]
+            );
+            console.log(
+              "drivers SELECTED INDEX STATUS:::: ",
+              this.drivers[this.driver_selectedIndex].status
+            );
+            this.drivers[this.driver_selectedIndex].status = status;
+            console.log(
+              "drivers SELECTED INDEX STATUS AFTER:::: ",
+              this.drivers[this.driver_selectedIndex].status
+            );
             loadingEl.dismiss();
           },
           (err) => {
@@ -186,6 +206,10 @@ export class UserPage implements OnInit {
           }
         );
       });
+  }
+
+  segmentChanged(ev: any) {
+    console.log("Segment changed", ev);
   }
 
   delete(id) {

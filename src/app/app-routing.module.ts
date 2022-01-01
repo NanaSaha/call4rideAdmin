@@ -6,19 +6,20 @@ import { PhoneVerificationGuard } from "./services/phone-verification.guard";
 const routes: Routes = [
   {
     path: "",
-    redirectTo: "home",
+    redirectTo: "ride-requests",
     pathMatch: "full",
   },
-  {
-    path: "home",
-    loadChildren: () =>
-      import("./home/home.module").then((m) => m.HomePageModule),
-    canLoad: [AuthGuard],
-  },
+
   {
     path: "setup",
     loadChildren: () =>
       import("./setup/setup.module").then((m) => m.SetupPageModule),
+  },
+  {
+    path: "quote",
+    loadChildren: () =>
+      import("./quote/quote.module").then((m) => m.QuotePageModule),
+    canLoad: [AuthGuard],
   },
   {
     path: "auth",
@@ -31,18 +32,7 @@ const routes: Routes = [
       import("./profile/profile.module").then((m) => m.ProfilePageModule),
     canLoad: [AuthGuard],
   },
-  {
-    path: "settings",
-    loadChildren: () =>
-      import("./settings/settings.module").then((m) => m.SettingsPageModule),
-    canLoad: [AuthGuard],
-  },
-  {
-    path: "quote",
-    loadChildren: () =>
-      import("./quote/quote.module").then((m) => m.QuotePageModule),
-    canLoad: [AuthGuard],
-  },
+
   {
     path: "ride-requests",
     loadChildren: () =>
@@ -59,6 +49,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: "driver-registration",
+    loadChildren: () =>
+      import("./driver-registration/driver-registration.module").then(
+        (m) => m.DriverRegistrationPageModule
+      ),
+  },
+  {
     path: "thank-you",
     loadChildren: () =>
       import("./thank-you/thank-you.module").then((m) => m.ThankYouPageModule),
@@ -68,54 +65,12 @@ const routes: Routes = [
     loadChildren: () =>
       import("./user/user.module").then((m) => m.UserPageModule),
   },
-  {
-    path: "driver",
-    loadChildren: () =>
-      import("./driver/driver.module").then((m) => m.DriverPageModule),
-  },
-  {
-    path: "job",
-    loadChildren: () => import("./job/job.module").then((m) => m.JobPageModule),
-  },
-  {
-    path: "driver-registration",
-    loadChildren: () =>
-      import("./driver-registration/driver-registration.module").then(
-        (m) => m.DriverRegistrationPageModule
-      ),
-  },
-  {
-    path: "driver-job",
-    loadChildren: () =>
-      import("./driver-job/driver-job.module").then(
-        (m) => m.DriverJobPageModule
-      ),
-  },
-  {
-    path: "rider-pickup",
-    loadChildren: () =>
-      import("./rider-pickup/rider-pickup.module").then(
-        (m) => m.RiderPickupPageModule
-      ),
-  },
-  {
-    path: "driver-navigation",
-    loadChildren: () =>
-      import("./driver-navigation/driver-navigation.module").then(
-        (m) => m.DriverNavigationPageModule
-      ),
-  },
-  {
-    path: "watch-driver-navigation",
-    loadChildren: () =>
-      import("./watch-driver-navigation/watch-driver-navigation.module").then(
-        (m) => m.WatchDriverNavigationPageModule
-      ),
-  },  {
-    path: 'driver-dashboard',
-    loadChildren: () => import('./driver-dashboard/driver-dashboard.module').then( m => m.DriverDashboardPageModule)
-  },
 
+  {
+    path: "entrance",
+    loadChildren: () =>
+      import("./entrance/entrance.module").then((m) => m.EntrancePageModule),
+  },
 ];
 
 @NgModule({

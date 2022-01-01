@@ -60,11 +60,69 @@ export class DriverRegService {
         first()
       );
   }
+  getDriversOnline(): Observable<any[]> {
+    return this.db
+      .collection("drivers", (ref) => ref.where("onlineStatus", "==", true))
+      .snapshotChanges()
+      .pipe(
+        map((snaps) =>
+          snaps.map((snap) => {
+            let id = snap.payload.doc.id;
+            let data: any = snap.payload.doc.data() as {};
+            data.id = id;
+            return {
+              ...data,
+            };
+          })
+        ),
+        first()
+      );
+  }
+
+  getLastDrivers(driver_id): Observable<any[]> {
+    return this.db
+      .collection("drivers", (ref) => ref.where("uid", "==", driver_id))
+      .snapshotChanges()
+      .pipe(
+        map((snaps) =>
+          snaps.map((snap) => {
+            let id = snap.payload.doc.id;
+            let data: any = snap.payload.doc.data() as {};
+            data.id = id;
+            return {
+              ...data,
+            };
+          })
+        ),
+        first()
+      );
+  }
+
+  rideEnded(driver_id, ended) {
+    console.log("driver_id::" + driver_id, "STATUS " + ended);
+    return new Promise<any>((resolve, reject) => {
+      this.db
+        .collection("drivers")
+        .doc(driver_id)
+        .update({ ended: ended })
+        .then(
+          (res) => {
+            console.log("RESPONSE FROM STATUS UDATE::" + resolve(res));
+            resolve(res);
+          },
+
+          (err) => {
+            console.log("ERROR HAPPEN");
+            reject(err);
+          }
+        );
+    });
+  }
 
   updateDriverStatus(statusItem, status) {
     console.log(
       "ITEM LIST::" + statusItem,
-      "STATUS" + status,
+      "STATUS " + status,
       "DRIVER ID" + statusItem.id
     );
     return new Promise<any>((resolve, reject) => {
@@ -133,13 +191,13 @@ export class DriverRegService {
     });
   }
 
-  assignDriverToUser(rider_id: any, driver_id: any) {
+  assignDriverToUser(rider_id: any, driver_id: any, job: any) {
     return new Promise<any>((resolve, reject) => {
       this.db
         .collection("users")
         .doc(rider_id)
         .collection("driver_jobs")
-        .add({ driver_id: driver_id })
+        .add({ driver_id: driver_id, ...job })
         .then(
           (res) => resolve(res),
           (err) => reject(err)
@@ -208,4 +266,73 @@ export class DriverRegService {
         first()
       );
   }
+
+  //TRIP HISTORY
+  getTripHistory(riderId): Observable<any> {
+    return this.db
+      .collection("users")
+      .doc(riderId)
+      .collection("driver_jobs")
+      .snapshotChanges()
+      .pipe(
+        map((snaps) =>
+          snaps.map((snap) => {
+            let data: any = snap.payload.doc.data() as {};
+            const id = snap.payload.doc.id;
+            data.id = id;
+            return {
+              id: id,
+              ...data,
+            };
+          })
+        ),
+        first()
+      );
+  }
+
+  // getTripHistory(userDocId: any): Observable<any> {
+  //   return this.db
+  //     .collection("drivers")
+
+  //     .snapshotChanges()
+  //     .pipe(
+  //       map((snaps) =>
+  //         snaps.map((snap) => {
+  //           let data: any = snap.payload.doc.data() as {};
+  //           const id = snap.payload.doc.id;
+  //           data.id = id;
+  //           return {
+  //             id: id,
+  //             ...data,
+  //           };
+  //         })
+  //       ),
+  //       first()
+  //     );
+  // }
 }
+
+// let documents = collectionRef
+//   .limit(1)
+//   .get()
+//   .then((snapshot) => {
+//     snapshot.forEach((doc) => {
+//       console.log("Parent Document ID: ", doc.id);
+
+//       let subCollectionDocs = collectionRef
+//         .doc(doc.id)
+//         .collection("subCollection")
+//         .get()
+//         .then((snapshot) => {
+//           snapshot.forEach((doc) => {
+//             console.log("Sub Document ID: ", doc.id);
+//           });
+//         })
+//         .catch((err) => {
+//           console.log("Error getting sub-collection documents", err);
+//         });
+//     });
+//   })
+//   .catch((err) => {
+//     console.log("Error getting documents", err);
+//   });

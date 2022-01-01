@@ -1,0 +1,41 @@
+ion-content {
+  --background: url("src/assets/image/office.png") no-repeat center / cover;
+  background-size: cover;
+  background-position: center;
+  // @keyframes bump {
+  //   0% {
+  //     top: 100%;
+  //   }
+  //   // 50% {top: 90%;}
+  //   100% {
+  //     top: 80%;
+  //   }
+  // }
+  .upsection {
+    position: fixed;
+    //  background: color($colors, primary, base);
+    top: 0%;
+    width: 100%;
+    //   border-radius: $buttonRadius;
+    left: 0%;
+  }
+
+  .o_section {
+    position: fixed;
+    //  background: color($colors, primary, base);
+    top: 80%;
+    width: 100%;
+    //   border-radius: $buttonRadius;
+    left: 0%;
+  }
+  ion-button {
+    background: rgb(10, 100, 235);
+    height: 50px;
+    color: #ffffff;
+    animation-direction: alternate;
+    animation-name: wiki;
+    animation-duration: 0.3s;
+    animation-iteration-count: 1;
+    border-radius: 12px;
+  }
+}

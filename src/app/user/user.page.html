@@ -43,33 +43,48 @@
   </ion-col>
 </ion-row>
 <ion-content>
-  <ion-list
-    *ngFor="let item of userdatas; let i = index"
-    class="accordion-list"
-    lines="none"
-    detail="false"
-    no-padding
-  >
-    <ion-item
-      tappable
-      (click)="toggleSelection(i)"
-      [ngClass]="{'section-active':item.open, 'section':!item.open}"
-    >
-      <ion-icon slot="start" name="arrow-forward" *ngIf="!item.open"></ion-icon>
-      <ion-icon slot="start" name="arrow-down" *ngIf="item.open"></ion-icon>
-      <ion-label> {{item.firstName +" "+item.lastName}} </ion-label>
+  <ion-segment [(ngModel)]="overall_list" (ionChange)="segmentChanged($event)">
+    <ion-segment-button value="users">
+      <ion-label>All Users</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="drivers">
+      <ion-label>All Drivers</ion-label>
+    </ion-segment-button>
+  </ion-segment>
 
-      <ion-label slot="end">
-        <!-- Role: {{item.entryDate | date: 'M/dd/yyyy'}} -->
-        Role: {{item.role}}
-      </ion-label>
-    </ion-item>
+  <div [ngSwitch]="overall_list">
+    <ion-list *ngSwitchCase="'users'" overflow-scroll="true">
+      <ion-list
+        *ngFor="let item of userdatas; let i = index"
+        class="accordion-list"
+        lines="none"
+        detail="false"
+        no-padding
+      >
+        <ion-item
+          tappable
+          (click)="toggleSelection(i)"
+          [ngClass]="{'section-active':item.open, 'section':!item.open}"
+        >
+          <ion-icon
+            slot="start"
+            name="arrow-forward"
+            *ngIf="!item.open"
+          ></ion-icon>
+          <ion-icon slot="start" name="arrow-down" *ngIf="item.open"></ion-icon>
+          <ion-label> {{item.firstName +" "+item.lastName}} </ion-label>
 
-    <ion-grid *ngIf="item.open" class="section-header">
-      <ion-row no-padding align-items-center>
-        <ion-col size="12">
-          <ion-row no-padding>
-            <!-- <ion-col size="4">
+          <ion-label slot="end">
+            <!-- Role: {{item.entryDate | date: 'M/dd/yyyy'}} -->
+            Role: {{item.role}}
+          </ion-label>
+        </ion-item>
+
+        <ion-grid *ngIf="item.open" class="section-header">
+          <ion-row no-padding align-items-center>
+            <ion-col size="12">
+              <ion-row no-padding>
+                <!-- <ion-col size="4">
                             <ion-item>
                                 <ion-button size="small" color="primary" slot="start">
                                     Assign Job
@@ -77,20 +92,20 @@
                                 </ion-button>
                             </ion-item>
                         </ion-col> -->
-            <ion-col>
-              <ion-item>
-                <ion-label color="primary">User Role</ion-label>
-                <ion-select
-                  placeholder="Select a role"
-                  [value]="item.role"
-                  (ionChange)="onSelectChange($event,item)"
-                >
-                  <ion-select-option value="admin">Admin</ion-select-option>
-                  <ion-select-option value="user">user</ion-select-option>
-                </ion-select>
-              </ion-item>
-            </ion-col>
-            <!-- <ion-col size="3.5">
+                <ion-col>
+                  <ion-item>
+                    <ion-label color="primary">User Role</ion-label>
+                    <ion-select
+                      placeholder="Select a role"
+                      [value]="item.role"
+                      (ionChange)="onSelectChange($event,item)"
+                    >
+                      <ion-select-option value="admin">Admin</ion-select-option>
+                      <ion-select-option value="user">user</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+                <!-- <ion-col size="3.5">
                             <ion-item>
                                 <ion-button size="small" color="primary" (click)="viewOnMap(item,i)">
                                     View map
@@ -98,65 +113,73 @@
                                 </ion-button>
                             </ion-item>
                         </ion-col> -->
-          </ion-row>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-
-    <div *ngIf="item.open">
-      <app-user-data [userdata]="item"></app-user-data>
-    </div>
-  </ion-list>
-
-  <ion-title>DRIVERS</ion-title>
-  <ion-list
-    *ngFor="let item of drivers; let i = index"
-    class="accordion-list"
-    lines="none"
-    detail="false"
-    no-padding
-  >
-    <ion-item
-      tappable
-      (click)="toggleSelectionDrivers(i)"
-      [ngClass]="{'section-active':item.open, 'section':!item.open}"
-    >
-      <ion-icon slot="start" name="arrow-forward" *ngIf="!item.open"></ion-icon>
-      <ion-icon slot="start" name="arrow-down" *ngIf="item.open"></ion-icon>
-      <ion-label> {{item.driverName}} </ion-label>
-
-      <ion-label slot="end"> Status: {{item.status}} </ion-label>
-    </ion-item>
-
-    <ion-grid *ngIf="item.open" class="section-header">
-      <ion-row no-padding align-items-center>
-        <ion-col size="12">
-          <ion-row no-padding>
-            <ion-col>
-              <ion-item>
-                <ion-label color="primary">Update Status</ion-label>
-                <ion-select
-                  placeholder="Update Status"
-                  [value]="item.status"
-                  (ionChange)="onSelectChangeDriver($event,item)"
-                >
-                  <ion-select-option value="verify">Verify</ion-select-option>
-                  <ion-select-option value="unverify"
-                    >Unverify</ion-select-option
-                  >
-                </ion-select>
-              </ion-item>
+              </ion-row>
             </ion-col>
           </ion-row>
-        </ion-col>
+        </ion-grid>
 
-        <!-- <ion-col size="12">
+        <div *ngIf="item.open">
+          <app-user-data [userdata]="item"></app-user-data>
+        </div>
+      </ion-list>
+    </ion-list>
+
+    <ion-list *ngSwitchCase="'drivers'" overflow-scroll="true">
+      <ion-title>DRIVERS</ion-title>
+      <ion-list
+        *ngFor="let item of drivers; let i = index"
+        class="accordion-list"
+        lines="none"
+        detail="false"
+        no-padding
+      >
+        <ion-item
+          tappable
+          (click)="toggleSelectionDrivers(i)"
+          [ngClass]="{'section-active':item.open, 'section':!item.open}"
+        >
+          <ion-icon
+            slot="start"
+            name="arrow-forward"
+            *ngIf="!item.open"
+          ></ion-icon>
+          <ion-icon slot="start" name="arrow-down" *ngIf="item.open"></ion-icon>
+          <ion-label> {{item.driverName}} </ion-label>
+
+          <ion-label slot="end" text-wrap> Status: {{item.status}} </ion-label>
+        </ion-item>
+
+        <ion-grid *ngIf="item.open" class="section-header">
+          <ion-row no-padding align-items-center>
+            <ion-col size="12">
+              <ion-row no-padding>
+                <ion-col>
+                  <ion-item>
+                    <ion-label color="primary">Update Status</ion-label>
+                    <ion-select
+                      placeholder="Update Status"
+                      [value]="item.status"
+                      (ionChange)="onSelectChangeDriver($event,item,i)"
+                    >
+                      <ion-select-option value="verified"
+                        >Verify</ion-select-option
+                      >
+                      <ion-select-option value="unverified"
+                        >Unverify</ion-select-option
+                      >
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+
+            <!-- <ion-col size="12">
           <ion-button (click)="delete(item.id)">Delete</ion-button>
         </ion-col> -->
-      </ion-row>
-    </ion-grid>
+          </ion-row>
+        </ion-grid>
 
-    <div *ngIf="item.open">
+        <!-- <div *ngIf="item.open">
       <ion-item class="child-item" text-wrap detail="false" lines="none">
         <ion-grid no-padding>
           <ion-row no-padding align-items-center>
@@ -197,6 +220,8 @@
           </ion-row>
         </ion-grid>
       </ion-item>
-    </div>
-  </ion-list>
+    </div> -->
+      </ion-list>
+    </ion-list>
+  </div>
 </ion-content>

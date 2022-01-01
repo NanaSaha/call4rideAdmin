@@ -26,5 +26,9 @@
     <param name="android-package" value="hu.dpal.phonegap.plugins.UniqueDeviceID"/>
   </feature>
 
+  <feature name="OneSignalPush">
+    <param name="android-package" value="com.onesignal.cordova.OneSignalPush"/>
+  </feature>
+
   
 </widget>

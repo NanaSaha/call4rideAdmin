@@ -28,9 +28,9 @@ import { AndroidPermissions } from "@ionic-native/android-permissions/ngx";
 import { Uid } from "@ionic-native/uid/ngx";
 import { UniqueDeviceID } from "@ionic-native/unique-device-id/ngx";
 import { DeviceService } from "./services/device.service";
-import { DriverRegService } from "./driver-registration/driver-reg.service";
 
 const { PushNotifications, Device } = Plugins;
+import OneSignal from "onesignal-cordova-plugin";
 
 // import { Plugins } from '@capacitor/core';
 
@@ -62,8 +62,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private screensizeService: ScreensizeService,
     private _StoreService: StoreService,
-    private _DeviceService: DeviceService,
-    private driverSvr: DriverRegService
+    private _DeviceService: DeviceService
   ) {
     this.initializeApp();
 
@@ -80,10 +79,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
 
       this.screensizeService.onResize(this.platform.width());
-      // if (this.platform.is('cordova')) {
-      //  this.getPermission();
-      //  this.getUniqueDeviceID();
-      // }
+      this.setupPush();
     });
 
     this.platform.resume.subscribe(async () => {
@@ -100,6 +96,20 @@ export class AppComponent implements OnInit, OnDestroy {
     // console.log('Device UUID is: ' + this.device.uuid);
   }
 
+  setupPush() {
+    console.log("RUNNING FIRST PUSH NOTIF");
+    // NOTE: Update the setAppId value below with your OneSignal AppId.
+    OneSignal.setAppId("1393d418-3ab0-4829-927f-92d31bf806e1");
+    OneSignal.setNotificationOpenedHandler(function (jsonData) {
+      console.log("notificationOpenedCallback: " + JSON.stringify(jsonData));
+    });
+    // iOS - Prompts the user for notification permissions.
+    //    * Since this shows a generic native prompt, we recommend instead using an In-App Message to prompt for notification permission (See step 6) to better communicate to your users what notifications they will get.
+    OneSignal.promptForPushNotificationsWithUserResponse(function (accepted) {
+      console.log("User accepted notifications: " + accepted);
+    });
+  }
+
   async ngOnInit() {
     this.selectedImage = this.defailtImage;
 
@@ -109,54 +119,54 @@ export class AppComponent implements OnInit, OnDestroy {
     // Request permission to use push notifications
     // iOS will prompt user and return if they granted permission or not
     // Android will just grant without prompting
-    PushNotifications.requestPermission().then((result) => {
-      if (result.granted) {
-        // Register with Apple / Google to receive push via APNS/FCM
-        PushNotifications.register();
-      } else {
-        // Show some error
-      }
-    });
+    // PushNotifications.requestPermission().then((result) => {
+    //   if (result.granted) {
+    //     // Register with Apple / Google to receive push via APNS/FCM
+    //     PushNotifications.register();
+    //   } else {
+    //     // Show some error
+    //   }
+    // });
 
     // On success, we should be able to receive notifications
-    PushNotifications.addListener(
-      "registration",
-      (token: PushNotificationToken) => {
-        this.storeAppToken(token.value);
+    // PushNotifications.addListener(
+    //   "registration",
+    //   (token: PushNotificationToken) => {
+    //     this.storeAppToken(token.value);
 
-        // alert('Push registration success, token: ' + token.value);
-      }
-    );
+    //     // alert('Push registration success, token: ' + token.value);
+    //   }
+    // );
 
     // Some issue with our setup and push will not work
-    PushNotifications.addListener("registrationError", (error: any) => {
-      alert("Error on registration: " + JSON.stringify(error));
-    });
+    // PushNotifications.addListener("registrationError", (error: any) => {
+    //   alert("Error on registration: " + JSON.stringify(error));
+    // });
 
     // Show us the notification payload if the app is open on our device
-    PushNotifications.addListener(
-      "pushNotificationReceived",
-      (notification: PushNotification) => {
-        // const message = JSON.parse(token.value);
-        if (notification !== null && notification !== undefined) {
-          let navigationExtras: NavigationExtras = {
-            queryParams: {
-              message: JSON.stringify(notification),
-            },
-          };
-          this.router.navigate(["driver"], navigationExtras);
-        }
-        // alert('Push received: ' + JSON.stringify(notification));
-      }
-    );
+    // PushNotifications.addListener(
+    //   "pushNotificationReceived",
+    //   (notification: PushNotification) => {
+    //     // const message = JSON.parse(token.value);
+    //     if (notification !== null && notification !== undefined) {
+    //       let navigationExtras: NavigationExtras = {
+    //         queryParams: {
+    //           message: JSON.stringify(notification),
+    //         },
+    //       };
+    //       this.router.navigate(["driver"], navigationExtras);
+    //     }
+    //     // alert('Push received: ' + JSON.stringify(notification));
+    //   }
+    // );
 
     // Method called when tapping on a notification
-    PushNotifications.addListener(
-      "pushNotificationActionPerformed",
-      (notification: PushNotificationActionPerformed) => {
-        alert("Push action performed: " + JSON.stringify(notification));
-      }
-    );
+    // PushNotifications.addListener(
+    //   "pushNotificationActionPerformed",
+    //   (notification: PushNotificationActionPerformed) => {
+    //     alert("Push action performed: " + JSON.stringify(notification));
+    //   }
+    // );
 
     this.authenticateUser();
   }
@@ -166,7 +176,8 @@ export class AppComponent implements OnInit, OnDestroy {
       if (isAuth) {
         this.deviceCheck();
       } else {
-        this.router.navigateByUrl("/auth");
+        // this.router.navigateByUrl("/auth");
+        this.router.navigateByUrl("/entrance");
       }
     });
   }
@@ -184,7 +195,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 device !== undefined &&
                 device.length > 0
               ) {
-                this.router.navigateByUrl("/home");
+                this.router.navigateByUrl("/ride-requests");
               } else {
                 this.router.navigateByUrl("/phone-signin");
               }
@@ -208,23 +219,6 @@ export class AppComponent implements OnInit, OnDestroy {
         console.log("USERDATAS:::", userdatas);
         console.log("USERDATAS ID:::", userdata.userId);
         if (userdata.userId) {
-          this.driverSvr.getDriverById(userdata.userId).subscribe((drivers) => {
-            console.log("DRIVER DETAILS:::", drivers);
-            if (drivers.length > 0) {
-              console.log("DRIVER DETAILS UID:::", drivers[0].uid);
-              console.log("USER ID:::", userdata.userId);
-              if (drivers[0].uid == userdata.userId) {
-                console.log("USER IS A DRIVER");
-
-                this.isDriver = true;
-                console.log("this.isDriver", this.isDriver);
-              } else {
-                console.log("NOT DRIVER");
-              }
-            } else {
-              console.log("DRIVER DETAILS NOT AVAILABLE");
-            }
-          });
         } else {
           console.log("USERDATAS ID NOT READY YET:::", userdata.userId);
         }

@@ -7,7 +7,6 @@ import { Plugins } from "@capacitor/core";
 
 import { AuthService, AuthResponseData } from "../auth/auth.service";
 import { DeviceService } from "../services/device.service";
-import { DriverRegService } from "../driver-registration/driver-reg.service";
 
 const { Device } = Plugins;
 
@@ -25,8 +24,7 @@ export class AuthPage implements OnInit {
     private router: Router,
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController,
-    private _DeviceService: DeviceService,
-    private driverSvr: DriverRegService
+    private _DeviceService: DeviceService
   ) {}
 
   ngOnInit() {}
@@ -82,7 +80,7 @@ export class AuthPage implements OnInit {
                 device !== undefined &&
                 device.length > 0
               ) {
-                this.router.navigateByUrl("/home");
+                this.router.navigateByUrl("/ride-requests");
               } else {
                 this.router.navigateByUrl("/phone-signin");
               }

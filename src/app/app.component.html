@@ -9,7 +9,7 @@
     >
       <ion-header>
         <ion-toolbar>
-          <ion-title> Call For Ride </ion-title>
+          <ion-title> Admin - Call For Ride </ion-title>
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
@@ -30,18 +30,13 @@
         </ion-menu-toggle>
 
         <ion-list>
-          <ion-menu-toggle>
+          <!--    <ion-menu-toggle>
             <ion-item lines="none" routerLink="/home">
               <ion-icon name="compass-outline" slot="start"></ion-icon>
               <ion-label>Book a trip</ion-label>
             </ion-item>
           </ion-menu-toggle>
-          <ion-menu-toggle>
-            <ion-item lines="none" routerLink="/bookings">
-              <ion-icon name="checkbox-outline" slot="start"></ion-icon>
-              <ion-label>Trip History</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
+
           <ion-menu-toggle>
             <ion-item lines="none" routerLink="/watch-driver-navigation">
               <ion-icon name="checkbox-outline" slot="start"></ion-icon>
@@ -50,18 +45,25 @@
           </ion-menu-toggle>
 
           <ion-menu-toggle>
+            <ion-item lines="none" routerLink="/triphistory">
+              <ion-icon name="checkbox-outline" slot="start"></ion-icon>
+              <ion-label>Trip History</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+
+          <ion-menu-toggle>
             <ion-item lines="none" routerLink="/settings">
               <ion-icon name="settings-outline" slot="start"></ion-icon>
               <ion-label>Settings</ion-label>
             </ion-item>
-          </ion-menu-toggle>
+          </ion-menu-toggle> -->
 
           <!-- <ion-menu-toggle *ngIf="adminMenuAllowed && !isDriver"> -->
           <ion-item *ngIf="adminMenuAllowed" no-lines><b>ADMIN</b> </ion-item>
           <ion-menu-toggle *ngIf="adminMenuAllowed">
             <ion-item lines="none" routerLink="/ride-requests">
               <ion-icon name="checkbox-outline" slot="start"></ion-icon>
-              <ion-label>Requests</ion-label>
+              <ion-label>Booking Requests</ion-label>
             </ion-item>
           </ion-menu-toggle>
           <ion-menu-toggle *ngIf="adminMenuAllowed">
@@ -100,34 +102,23 @@
                 fill="clear"
                 color="dark"
                 size="small"
-                *ngIf="adminMenuAllowed"
                 routerLink="/user"
                 routerLinkActive="active-link"
                 class="link"
               >
-                users
+                Users
               </ion-button>
               <ion-button
                 fill="clear"
                 color="dark"
                 size="small"
-                *ngIf="adminMenuAllowed"
                 routerLink="/ride-requests"
                 routerLinkActive="active-link"
                 class="link"
               >
-                requests
+                Ride Requests
               </ion-button>
-              <ion-button
-                fill="clear"
-                color="dark"
-                size="small"
-                routerLink="/home"
-                routerLinkActive="active-link"
-                class="link"
-              >
-                book a ride
-              </ion-button>
+
               <ion-button
                 fill="clear"
                 color="dark"
@@ -136,18 +127,9 @@
                 routerLinkActive="active-link"
                 class="link"
               >
-                profile
+                Profile
               </ion-button>
-              <ion-button
-                fill="clear"
-                color="dark"
-                size="small"
-                routerLink="/settings"
-                routerLinkActive="active-link"
-                class="link"
-              >
-                settings
-              </ion-button>
+
               <ion-button
                 fill="clear"
                 color="dark"
